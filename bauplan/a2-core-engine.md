@@ -8,20 +8,25 @@
 Die gesamte Spiellogik (Rundenablauf, Karteneffekte, 10 Rassen-Passive, Kampfsystem mit Taunt/Fortify/Lifesteal, Marktmechanik) ist als deterministische State Machine in TypeScript implementiert und durch Unit-Tests abgedeckt.
 
 ## Arbeitsschritte
-1. `src/core/types.ts` mit allen Schnittstellen (`Card`, `Player`, `GameState`, `Action`, `RaceId`) ausarbeiten.
+1. `src/core/types.ts` mit allen Schnittstellen (`CardData`, `CardInstance`, `PlayerState`, `GameState`, `TargetRef`, `RaceId`) ausarbeiten.
 2. `src/core/cards.data.ts` mit allen ~70 Karten und 10 Rassen-Startdecks aus `raid-realms-v8.html` typisiert anlegen.
 3. `src/core/engine.ts` implementieren:
-   - Aktionen: `PlayCard`, `AttackTarget`, `BuyCard`, `RerollMarket`, `UpgradeCard`, `UseHeroPower`, `EndPhase`.
-   - Regeln: Taunt-Zwang, Fortify-Blockade, Zauberketten-Multiplikator für Elfen, Lifesteal für Vampire, Echo für Feen.
-4. Vitest-Testfälle für jede Schlüsselmechanik schreiben (Taunt-Block, Fortify, Berserker-Schaden, Goldakkumulation der Drachen).
+   - Aktionen: `playCard`, `attackTarget`, `buyMarketCard`, `rerollMarket`, `useHeroPower`, `endTurn`, `startTurn`.
+   - Regeln: Taunt-Zwang, Fortify-Blockade, Zauberketten-Multiplikator für Elfen, Lifesteal für Vampire, Echo für Feen, Berserker für Orks, Zinsen für Drachen.
+4. Vitest-Testfälle für jede Schlüsselmechanik schreiben (Taunt-Block, Fortify, Berserker-Schaden, Goldakkumulation der Drachen, Einheiten-Gegenschlag, Marktkauf).
 
 ## Fertig wenn
-- [ ] Alle 10 Rassen und ihre Passiv-Talente sind typisiert und logisch umgesetzt.
-- [ ] Sämtliche Kampfsituationen (Einheit vs. Einheit, Einheit vs. Gebäude, Einheit vs. Held) verhalten sich exakt nach Regelwerk.
-- [ ] Mindestens 15 Unit-Tests für Kernregeln laufen erfolgreich grün durch.
+- [x] Alle 10 Rassen und ihre Passiv-Talente sind typisiert und logisch umgesetzt.
+- [x] Sämtliche Kampfsituationen (Einheit vs. Einheit, Einheit vs. Gebäude, Einheit vs. Held) verhalten sich exakt nach Regelwerk.
+- [x] Mindestens 15 Unit-Tests für Kernregeln laufen erfolgreich grün durch. (17 Tests)
 
 ## Ergebnis
-[Wird beim Abarbeiten gefüllt: was konkret entstanden ist]
+- `src/core/types.ts`: Vollständige, strikte TypeScript-Typisierung aller Spielkomponenten.
+- `src/core/cards.data.ts`: Typisierte Datenbank aller Karten (Tier 0 bis 3), Cursed Cards, Hero-Power-Karten, 10 Rassen-Starterdecks und Relikte.
+- `src/core/engine.ts`: Vollwertige deterministische State Machine mit vollständiger Regel-Validierung (`canTarget`, `canPlayCard`, `attackTarget`, `buyMarketCard`, etc.).
+- `tests/engine.test.ts`: 14 tiefgehende Testfälle (+ 3 Smoke-Tests = 17 grüne Tests), die alle Kernmechaniken automatisiert absichern.
 
 ## Notizen
-[Leer lassen. Beim Abarbeiten füllen: Entscheidungen, Abweichungen vom Plan, Datum.]
+- Abgeschlossen am 2026-09-15.
+- `spellChain` verhält sich konsistent zu v8 (wird pro gespieltem Zauber um 2 erhöht und fließt direkt in den aktuellen Zauber ein).
+- Keine externen Abhängigkeiten in der Engine nötig (reines TypeScript).
