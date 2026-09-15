@@ -15,15 +15,18 @@ export class GameUI {
   private selectedAttackerSlot: number | null = null;
   private targetedSpellCard: CardInstance | null = null;
   private p2p?: { network: P2PNetwork; myPlayerIndex: number };
+  private aiDifficulty: 'normal' | 'hard';
 
   constructor(
     container: HTMLElement,
     state: GameState,
-    p2p?: { network: P2PNetwork; myPlayerIndex: number }
+    p2p?: { network: P2PNetwork; myPlayerIndex: number },
+    aiDifficulty: 'normal' | 'hard' = 'normal'
   ) {
     this.container = container;
     this.state = state;
     this.p2p = p2p;
+    this.aiDifficulty = aiDifficulty;
 
     if (this.p2p) {
       this.setupP2PListeners();
@@ -354,7 +357,7 @@ export class GameUI {
   private runAITurn(): void {
     if (this.state.over) return;
     const aiIndex = 1;
-    BotAgent.playTurn(this.state, aiIndex);
+    BotAgent.playTurn(this.state, aiIndex, this.aiDifficulty);
     SoundEngine.turn();
     this.render();
   }

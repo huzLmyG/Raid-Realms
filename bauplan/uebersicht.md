@@ -3,8 +3,16 @@
 > Inhaltsverzeichnis des Bauplans. Entstanden nach Phase 4 der `idee-zu-bauplan`-Methodik.  
 > Lebendes Dokument — nach jeder Meilenstein-Retro aktualisieren.
 
-**Du bist hier:** Teil C · Paket C1 (Mobile-First PWA)  
+**Du bist hier:** Teil D · Paket D1 (Audio- & Visual-Polish)  
 **Letzte Aktualisierung:** 2026-09-15
+
+---
+
+## Meilenstein-Retro C (MVP: Mobile PWA & P2P-Multiplayer abgeschlossen)
+- **Erkenntnis:** Das P2P-WebRTC-Setup über PeerJS funktioniert vollständig ohne laufende Serverkosten. Durch die Host-autoritative State-Synchronisation treten keine Desyncs auf.
+- **Offline & Mobil:** Dank ServiceWorker und responsivem Touch-Layout ist das Spiel auf jedem Smartphone offline als PWA installierbar.
+- **Solo-KI:** Die neue taktische KI („Schwer“) berechnet Lethal-Sequenzen zuverlässig und passt ihre Marktkäufe an Rassen-Synergien an.
+- **Konsequenz für Teil D:** Der Kern ist vollständig spielbar — jetzt geht es um Visual Juice (Partikel, Screen Shake, Tooltips) und die Store-Builds (itch.io & Tauri/Steam).
 
 ---
 
@@ -46,17 +54,17 @@
 | [B2](b2-playtesting.md) | **Playtesting mit echten Spielern:** Feedback von mindestens 5 Testnutzern zu Spielspaß und Balance sammeln. | ✅ fertig | 👤 Nutzer / 🤖 Claude |
 | [B3](b3-go-no-go.md) | **Go/No-Go-Meilenstein & Balancing-Retro:** Auswertung des Feedbacks und formelle Freigabe für Phase C. | ✅ fertig | 👤 Nutzer / 🤖 Claude |
 
-### Teil C — MVP (Mobile-First PWA & P2P-Multiplayer)
+### Teil C — MVP (100% Abgeschlossen)
 | Paket | Titel & Ziel (1 Satz) | Status | Rollen |
 |---|---|---|---|
 | [C1](c1-mobile-pwa.md) | **Mobile-First PWA:** Touch-Gesten, responsive Anpassung für Smartphones und Offline-Support via ServiceWorker. | ✅ fertig | 🤖 Claude |
 | [C2](c2-p2p-multiplayer.md) | **P2P 1v1 Multiplayer:** WebRTC/PeerJS Raum-Code-System für direkte Duelle ohne laufende Serverkosten. | ✅ fertig | 🤖 Claude |
-| [C3](c3-advanced-ai.md) | **Erweiterte Solo-KI:** Zusätzlicher taktischer Schwierigkeitsgrad mit Synergie-Erkennung. | ⏳ bereit | 🤖 Claude |
+| [C3](c3-advanced-ai.md) | **Erweiterte Solo-KI:** Zusätzlicher taktischer Schwierigkeitsgrad mit Synergie-Erkennung. | ✅ fertig | 🤖 Claude |
 
 ### Teil D — Polish & Release-Vorbereitung (Steam / itch.io)
 | Paket | Titel & Ziel (1 Satz) | Status | Rollen |
 |---|---|---|---|
-| [D1](d1-audiovisual-polish.md) | **Audio- & Visual-Polish:** Dynamische Web Audio Effekte, Partikel und Treffer-Animationen verfeinern. | ⏳ offen | 🤖 Claude |
+| [D1](d1-audiovisual-polish.md) | **Audio- & Visual-Polish:** Dynamische Web Audio Effekte, Partikel und Treffer-Animationen verfeinern. | ⏳ bereit | 🤖 Claude |
 | [D2](d2-itch-launch.md) | **itch.io Veröffentlichung:** Öffentlicher Store-Auftritt auf itch.io mit spielbarem Web-Build. | ⏳ offen | 👤 Nutzer / 🤖 Claude |
 | [D3](d3-tauri-steam-build.md) | **Tauri Desktop-Packaging:** Kompilierung einer nativen Windows-Executable als Vorbereitung für Steam. | ⏳ offen | 🤖 Claude |
 

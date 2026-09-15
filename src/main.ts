@@ -15,6 +15,7 @@ import { P2PNetwork } from './net/p2p-peerjs.ts';
 const app = document.getElementById('app')!;
 
 let selectedMode: 'ai' | 'pvp' = 'ai';
+let selectedDifficulty: 'normal' | 'hard' = 'normal';
 let selectedP1Race: RaceId = 'human';
 let selectedP2Race: RaceId = 'orc';
 let activeP2PNetwork: P2PNetwork | null = null;
@@ -49,6 +50,14 @@ function renderStartScreen(): void {
           <button class="mode-btn" id="btn-rules">📖 Spielregeln</button>
           <button class="mode-btn" id="btn-legal">⚖️ Impressum & Credits</button>
         </div>
+
+        ${selectedMode === 'ai' ? `
+          <div style="display:flex;justify-content:center;gap:0.8rem;margin-bottom:1.2rem;align-items:center;">
+            <span style="color:var(--txt2);font-size:0.95rem;">KI-Schwierigkeit:</span>
+            <button class="mode-btn ${selectedDifficulty === 'normal' ? 'sel' : ''}" id="diff-normal" style="padding:0.4rem 0.8rem;font-size:0.9rem;">Normal</button>
+            <button class="mode-btn ${selectedDifficulty === 'hard' ? 'sel' : ''}" id="diff-hard" style="padding:0.4rem 0.8rem;font-size:0.9rem;">🧠 Taktisch (Schwer)</button>
+          </div>
+        ` : ''}
 
         <div class="race-grid" id="race-grid">
           ${raceCardsHtml}
@@ -154,6 +163,15 @@ function renderStartScreen(): void {
   });
   document.getElementById('mode-pvp')?.addEventListener('click', () => {
     selectedMode = 'pvp';
+    renderStartScreen();
+  });
+
+  document.getElementById('diff-normal')?.addEventListener('click', () => {
+    selectedDifficulty = 'normal';
+    renderStartScreen();
+  });
+  document.getElementById('diff-hard')?.addEventListener('click', () => {
+    selectedDifficulty = 'hard';
     renderStartScreen();
   });
 
@@ -289,10 +307,14 @@ function renderStartScreen(): void {
 function startGame(): void {
   const state = GameEngine.createGame(
     { name: 'Spieler', race: selectedP1Race, isAI: false },
-    { name: selectedMode === 'ai' ? 'KI-Gegner' : 'Spieler 2', race: selectedP2Race, isAI: selectedMode === 'ai' }
+    {
+      name: selectedMode === 'ai' ? `KI (${selectedDifficulty === 'hard' ? 'Taktisch' : 'Normal'})` : 'Spieler 2',
+      race: selectedP2Race,
+      isAI: selectedMode === 'ai'
+    }
   );
 
-  new GameUI(app, state);
+  new GameUI(app, state, undefined, selectedDifficulty);
 }
 
 // Service Worker Registration for PWA Offline Support

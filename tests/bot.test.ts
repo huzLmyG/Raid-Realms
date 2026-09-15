@@ -59,4 +59,32 @@ describe('Raid Realms - Bot Agent & AI Simulation', () => {
     expect(state.winner).not.toBeNull();
     expect(state.players.some(p => p.hp <= 0)).toBe(true);
   });
+
+  it('Schwere KI erkennt Lethal und beendet das Spiel konsequent', () => {
+    const state = GameEngine.createGame(
+      { name: 'HardBot', race: 'orc', isAI: true },
+      { name: 'Gegner', race: 'human', isAI: false },
+      101
+    );
+
+    const bot = state.players[0];
+    const opp = state.players[1];
+
+    // Gegner hat nur noch 4 HP
+    opp.hp = 4;
+    // Bot hat eine bereite Einheit mit 5 Angriff
+    bot.units[0] = { ...createCardInstance('knight'), attack: 5, health: 6, summoned: false };
+
+    // canAchieveLethal sollte true liefern
+    expect(BotAgent.canAchieveLethal(state, 0, 1)).toBe(true);
+
+    // Bot fuehrt Hard-Zug aus
+    BotAgent.playTurn(state, 0, 'hard');
+
+    // Gegner wurde besiegt, Spiel ist beendet
+    expect(opp.hp).toBeLessThanOrEqual(0);
+    expect(state.over).toBe(true);
+    expect(state.winner).toBe(0);
+  });
 });
+
