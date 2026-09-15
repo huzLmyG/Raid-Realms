@@ -1,6 +1,6 @@
 /* ===== CARDS STYLING ===== */
 .card {
-  width: clamp(100px, 11vw, 135px);
+  width: clamp(80px, 11vw, 135px);
   aspect-ratio: 2/3;
   background: var(--bg2);
   border: 2px solid var(--border);

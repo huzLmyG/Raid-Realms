@@ -163,5 +163,14 @@ function startGame(): void {
   new GameUI(app, state);
 }
 
+// Service Worker Registration for PWA Offline Support
+if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch((err) => {
+      console.warn('PWA ServiceWorker registration skipped/failed:', err);
+    });
+  });
+}
+
 // Initial render
 renderStartScreen();

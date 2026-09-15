@@ -1,0 +1,19 @@
+{
+  "name": "Raid Realms — Ultimate Tactical Deckbuilder",
+  "short_name": "Raid Realms",
+  "description": "Taktisches 1v1 Deckbuilder-Duell mit 10 Rassen, In-Match-Markt und Local-First PVE/PVP.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#04020a",
+  "theme_color": "#0d0618",
+  "icons": [
+    {
+      "src": "./cards/dragon_portrait.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "strategy", "card"]
+}

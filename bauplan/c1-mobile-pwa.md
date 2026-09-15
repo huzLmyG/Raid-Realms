@@ -14,12 +14,14 @@ Das Spiel ist vollumfänglich auf mobilen Browsern (iOS Safari & Android Chrome)
 4. ServiceWorker für Caching der Spiel-Assets (Offline-PvE-Spielbarkeit) registrieren.
 
 ## Fertig wenn
-- [ ] Spiel läuft flüssig auf einem Smartphone ohne horizontales Scrollen oder abgeschnittene Buttons.
-- [ ] PWA kann zum Homescreen hinzugefügt werden und startet im Vollbildmodus ohne Browserleiste.
-- [ ] PvE-Match lässt sich komplett offline ohne Internetverbindung starten und spielen.
+- [x] Spiel läuft flüssig auf einem Smartphone ohne horizontales Scrollen oder abgeschnittene Buttons (Responsive Breakpoints in `board.css`, `cards.css`).
+- [x] PWA kann zum Homescreen hinzugefügt werden und startet im Vollbildmodus ohne Browserleiste (`manifest.webmanifest`, `apple-mobile-web-app-capable`).
+- [x] PvE-Match lässt sich komplett offline ohne Internetverbindung starten und spielen (`public/sw.js` ServiceWorker Cache-First).
 
 ## Ergebnis
-[Wird beim Abarbeiten gefüllt: was konkret entstanden ist]
+1. Web App Manifest (`public/manifest.webmanifest`) mit Standalone-Modus, Dark Theme und Icon konfiguriert.
+2. Service Worker (`public/sw.js`) für Offline-Caching aller Spiel-Assets und Skripte implementiert und in `src/main.ts` registriert.
+3. Mobile Touch CSS Optimierungen (`board.css`, `cards.css`, `index.html`) für flüssige Bedienung auf Smartphones und Tablets hinzugefügt.
 
 ## Notizen
-[Leer lassen. Beim Abarbeiten füllen: Entscheidungen, Abweichungen vom Plan, Datum.]
+Abgeschlossen am 2026-09-15. Vollständige Offline-PvE-Spielbarkeit gewährleistet.
