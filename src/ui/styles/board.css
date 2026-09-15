@@ -1,0 +1,329 @@
+/* ===== GAME SCREEN — HEARTHSTONE SPLIT ===== */
+#screen-game {
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.game-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: radial-gradient(ellipse at 50% 40%, #120828 0%, #04020a 80%);
+  overflow: hidden;
+}
+
+/* Player bars */
+.p-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 0.4rem 0.8rem;
+  background: linear-gradient(180deg, rgba(13, 6, 24, 0.97), rgba(4, 2, 10, 0.99));
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.p-bar.enemy {
+  border-bottom: 2px solid rgba(224, 32, 64, 0.3);
+}
+
+.p-bar.mine {
+  border-top: 2px solid rgba(240, 192, 64, 0.3);
+}
+
+.p-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  border: 2px solid var(--border);
+  background: var(--bg2);
+  overflow: hidden;
+}
+
+.p-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.p-bar.enemy .p-avatar {
+  border-color: rgba(224, 32, 64, 0.5);
+  box-shadow: 0 0 12px rgba(224, 32, 64, 0.2);
+}
+
+.p-bar.mine .p-avatar {
+  border-color: rgba(240, 192, 64, 0.5);
+  box-shadow: 0 0 12px rgba(240, 192, 64, 0.2);
+}
+
+.p-info {
+  flex: none;
+  min-width: 0;
+  text-align: center;
+}
+
+.p-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  color: var(--txt2);
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.p-stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.2rem;
+}
+
+.p-stats .sv {
+  font-weight: 700;
+  color: var(--txt);
+}
+
+.race-passive-bar {
+  font-size: 0.65rem;
+  color: var(--arcane);
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 250px;
+  margin-top: 0.1rem;
+}
+
+.hp-bar {
+  height: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.hp-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.hp-fill.enemy-fill {
+  background: linear-gradient(90deg, #c41e3a, #ff4060);
+}
+
+.hp-fill.mine-fill {
+  background: linear-gradient(90deg, #20a040, #50ff80);
+}
+
+.p-bar.can-target {
+  cursor: crosshair !important;
+  border-color: var(--blood) !important;
+  box-shadow: inset 0 0 20px rgba(224, 32, 64, 0.4) !important;
+  animation: tpulse 0.8s ease-in-out infinite;
+}
+
+@keyframes tpulse {
+  0%, 100% { box-shadow: inset 0 0 15px rgba(224, 32, 64, 0.3); }
+  50% { box-shadow: inset 0 0 35px rgba(224, 32, 64, 0.7); }
+}
+
+/* Hero Power Button */
+.hero-power-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--arcane);
+  background: radial-gradient(circle, rgba(155, 127, 255, 0.15), var(--bg2));
+  color: var(--arcane);
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.hero-power-btn:hover:not(:disabled) {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(155, 127, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.hero-power-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+.hero-power-btn .hp-cost {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: var(--gold);
+  color: #000;
+  font-size: 0.55rem;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Board areas */
+.board-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  flex: 1 1 0;
+  min-height: 60px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.board-area.enemy-board {
+  background: linear-gradient(180deg, rgba(60, 10, 20, 0.12), rgba(4, 2, 10, 0.95));
+}
+
+.board-area.my-board {
+  background: linear-gradient(0deg, rgba(20, 40, 10, 0.12), rgba(4, 2, 10, 0.95));
+}
+
+.board-section {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.board-divider {
+  width: 2px;
+  height: 60%;
+  background: linear-gradient(180deg, transparent, var(--border), transparent);
+  flex-shrink: 0;
+  margin: 0 0.2rem;
+}
+
+.board-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  color: var(--muted);
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+/* Graveyard & Piles */
+.graveyard-zone {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.3rem;
+  flex-shrink: 0;
+}
+
+.gy-pile {
+  width: 32px;
+  height: 42px;
+  background: linear-gradient(135deg, rgba(80, 80, 80, 0.2), rgba(40, 40, 40, 0.3));
+  border: 1.5px solid rgba(128, 128, 128, 0.3);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  position: relative;
+}
+
+.gy-pile .gy-icon {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.gy-pile .gy-count {
+  font-size: 0.6rem;
+  color: var(--txt2);
+  font-weight: 700;
+}
+
+.pile-zone {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pile {
+  width: 32px;
+  height: 42px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.pile-draw {
+  background: linear-gradient(135deg, rgba(48, 120, 255, 0.15), rgba(48, 120, 255, 0.05));
+  border: 1.5px solid rgba(48, 120, 255, 0.4);
+}
+
+.pile-discard {
+  background: linear-gradient(135deg, rgba(200, 100, 40, 0.15), rgba(200, 100, 40, 0.05));
+  border: 1.5px solid rgba(200, 100, 40, 0.4);
+}
+
+.pile-icon {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.pile-count {
+  font-size: 0.55rem;
+  color: var(--txt);
+  font-weight: 700;
+}
+
+.pile-label {
+  font-size: 0.4rem;
+  color: var(--txt2);
+  text-transform: uppercase;
+}
+
+/* Hand zone */
+.hand-zone {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0.6rem;
+  padding: 0.3rem 1rem 0.2rem;
+  flex-shrink: 0;
+  min-height: 155px;
+  perspective: 800px;
+  overflow: visible;
+  position: relative;
+  z-index: 2;
+}

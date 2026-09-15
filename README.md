@@ -2,7 +2,7 @@
 
 > **Taktisches 1v1-Deckbuilder-Duell** im Browser und auf Desktop — Dark Fantasy Pixel Art, 10 asymmetrische Rassen, In-Match-Kartenmarkt und tiefe Synergien.
 
-[![Status](https://img.shields.io/badge/Status-In%20Entwicklung%20(A3%20bereit)-blue.svg)](#bauplan--status)
+[![Status](https://img.shields.io/badge/Status-In%20Entwicklung%20(A4%20bereit)-blue.svg)](#bauplan--status)
 [![Engine](https://img.shields.io/badge/Engine-TypeScript%20%7C%20Vite-yellow.svg)](#technologie)
 [![Platform](https://img.shields.io/badge/Plattform-Web%20%7C%20PWA%20%7C%20Steam%20(Tauri)-purple.svg)](#plattformen)
 
@@ -31,7 +31,8 @@ Das Projekt wird strukturiert nach der **`idee-zu-bauplan`**-Methodik entwickelt
 > **Teil A — Fundament & Modularisierung**  
 > ✅ [A1 — Projekt-Setup & Build-Pipeline](bauplan/a1-setup-build.md) (Abgeschlossen)  
 > ✅ [A2 — Core Engine & Datenmodelle](bauplan/a2-core-engine.md) (Abgeschlossen)  
-> ⏳ Nächstes Paket: [A3 — UI-Portierung & Spielfeld-Layout](bauplan/a3-ui-portierung.md) (Bereit zur Umsetzung)
+> ✅ [A3 — UI-Portierung & Spielfeld-Layout](bauplan/a3-ui-portierung.md) (Abgeschlossen)  
+> ⏳ Nächstes Paket: [A4 — Solo-Bot & Lokales Duell](bauplan/a4-solo-bot.md) (Bereit zur Umsetzung)
 
 ### Phasen-Übersicht:
 1. **Teil A — Fundament & Modularisierung** (Vite, TS, State Machine, Engine-Tests, lokales PvE)
@@ -45,8 +46,8 @@ Das Projekt wird strukturiert nach der **`idee-zu-bauplan`**-Methodik entwickelt
 ## 🛠️ Technologie
 
 - **Core:** TypeScript, deterministische State Machine, Vitest (17 Tests)
-- **Frontend:** HTML5 Canvas / CSS Grid & Flexbox, responsive PWA
-- **Audio:** Web Audio API (Synthesizer-Pipeline)
+- **Frontend:** HTML5, CSS Grid & Flexbox, modulare UI-Komponenten
+- **Audio:** Web Audio API (Synthesizer-Pipeline mit 12 Sound-Effekten)
 - **Netzwerk:** WebRTC (PeerJS P2P, serverlos)
 - **Desktop:** Tauri v2 (geplant für Steam-Release)
 

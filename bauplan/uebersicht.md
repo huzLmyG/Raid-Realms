@@ -3,7 +3,7 @@
 > Inhaltsverzeichnis des Bauplans. Entstanden nach Phase 4 der `idee-zu-bauplan`-Methodik.  
 > Lebendes Dokument — nach jeder Meilenstein-Retro aktualisieren.
 
-**Du bist hier:** Teil A · Vorbereitung von Paket A3 (UI-Portierung & Spielfeld-Layout)  
+**Du bist hier:** Teil A · Vorbereitung von Paket A4 (Solo-Bot & Lokales Duell)  
 **Letzte Aktualisierung:** 2026-09-15
 
 ---
@@ -22,8 +22,8 @@
 |---|---|---|---|
 | [A1](a1-setup-build.md) | **Projekt-Setup & Build-Pipeline:** Vite, TypeScript und Asset-Pipeline für 102 Kartenbilder einrichten. | ✅ fertig | 🤖 Claude |
 | [A2](a2-core-engine.md) | **Core Engine & Datenmodelle:** Deterministische State Machine, Kartendatenbank und Regel-Unit-Tests erstellen. | ✅ fertig | 🤖 Claude |
-| [A3](a3-ui-portierung.md) | **UI-Portierung & Spielfeld-Layout:** Hearthstone Split-Screen, Karten- und Marktdarstellung modularisieren. | ⏳ bereit | 🤖 Claude |
-| [A4](a4-solo-bot.md) | **Solo-Bot & Lokales Duell:** KI-Anbindung und Rassenwahl für vollständiges Offline-PvE-Spiel im Browser. | ⏳ offen | 🤖 Claude / 👤 Nutzer |
+| [A3](a3-ui-portierung.md) | **UI-Portierung & Spielfeld-Layout:** Hearthstone Split-Screen, Karten- und Marktdarstellung modularisieren. | ✅ fertig | 🤖 Claude |
+| [A4](a4-solo-bot.md) | **Solo-Bot & Lokales Duell:** KI-Anbindung und Rassenwahl für vollständiges Offline-PvE-Spiel im Browser. | ⏳ bereit | 🤖 Claude / 👤 Nutzer |
 
 ### Teil B — Proof (Kernhypothese testen vor weiterer Infrastruktur)
 | Paket | Titel & Ziel (1 Satz) | Status | Rollen |

@@ -1,0 +1,278 @@
+:root {
+  --bg0: #04020a;
+  --bg1: #0d0618;
+  --bg2: #150920;
+  --bg3: #1e0f30;
+  --gold: #f0c040;
+  --blood: #e02040;
+  --arcane: #9b7fff;
+  --green: #30c050;
+  --txt: #f5ead8;
+  --txt2: #c0a878;
+  --muted: #5a4d40;
+  --border: #3d2f50;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Barlow Condensed', sans-serif;
+  background: var(--bg0);
+  color: var(--txt);
+  min-height: 100vh;
+  overflow: hidden;
+  user-select: none;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+/* ===== START SCREEN ===== */
+#screen-start {
+  padding: 2rem;
+  overflow-y: auto;
+  height: 100vh;
+  background: radial-gradient(ellipse at 50% 0%, #1a0830 0%, #04020a 70%);
+}
+
+.start-wrap {
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.game-title {
+  font-family: 'Cinzel', serif;
+  font-size: 3.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--gold), var(--arcane));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  letter-spacing: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.subtitle {
+  color: var(--txt2);
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+}
+
+.mode-row {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.mode-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  padding: 1rem 2.5rem;
+  background: var(--bg2);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  color: var(--txt);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.mode-btn:hover,
+.mode-btn.sel {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(240, 192, 64, 0.3);
+  transform: translateY(-3px);
+}
+
+.race-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1000px) {
+  .race-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.race-card {
+  background: var(--bg2);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 0.8rem;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-align: center;
+}
+
+.race-card:hover,
+.race-card.sel {
+  border-color: var(--gold);
+  box-shadow: 0 0 18px rgba(240, 192, 64, 0.25);
+  transform: translateY(-3px);
+}
+
+.race-portrait {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  margin: 0 auto 0.4rem;
+  display: block;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.race-card:hover .race-portrait,
+.race-card.sel .race-portrait {
+  border-color: var(--gold);
+  box-shadow: 0 0 15px rgba(240, 192, 64, 0.3);
+  transform: scale(1.15);
+}
+
+.race-card h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  color: var(--gold);
+  margin-bottom: 0.3rem;
+}
+
+.race-passive {
+  font-size: 0.75rem;
+  color: var(--txt2);
+  line-height: 1.3;
+}
+
+.selection-status {
+  display: flex;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 2rem;
+  margin-bottom: 1.5rem;
+  gap: 3rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.player-sel {
+  text-align: center;
+}
+
+.player-sel .label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.player-sel .chosen {
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+  font-size: 1.1rem;
+}
+
+.start-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  padding: 1rem 4rem;
+  background: linear-gradient(135deg, #7b1a2a, #4a0d15);
+  border: 2px solid var(--blood);
+  border-radius: 12px;
+  color: var(--txt);
+  cursor: pointer;
+  margin: 0.5rem;
+  transition: all 0.25s;
+}
+
+.start-btn:hover:not(:disabled) {
+  box-shadow: 0 0 30px rgba(224, 32, 64, 0.5);
+  transform: translateY(-2px);
+}
+
+.start-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Modals */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal-box {
+  background: var(--bg2);
+  border: 2px solid var(--gold);
+  border-radius: 14px;
+  padding: 2rem;
+  max-width: 700px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-box h2 {
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.modal-box h3 {
+  font-family: 'Cinzel', serif;
+  color: var(--arcane);
+  font-size: 1rem;
+  margin: 1rem 0 0.4rem;
+}
+
+.modal-box p,
+.modal-box li {
+  font-size: 0.9rem;
+  color: var(--txt2);
+  line-height: 1.6;
+  margin-bottom: 0.4rem;
+}
+
+.modal-box ul {
+  padding-left: 1.2rem;
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.8rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: var(--txt);
+}
