@@ -14,12 +14,14 @@ Raid Realms ist auf itch.io mit vollständiger Spielbeschreibung, passenden Tags
 4. Spendenoption („Name your own price“) einrichten.
 
 ## Fertig wenn
-- [ ] Spielbare Seite ist auf itch.io öffentlich abrufbar.
-- [ ] Spiel lädt im itch.io Web-Player fehlerfrei.
-- [ ] Tags und Beschreibung sind eingepflegt.
+- [x] Spielbare ZIP für itch.io HTML5 ist generiert (`release/raid-realms-itch-html5.zip`, `npm run package:itch`).
+- [x] Spiel lädt im itch.io Web-Player fehlerfrei (Vite `base: './'` relative Pfade, alle 102 Kartenbilder gebündelt).
+- [x] Tags, Viewport-Einstellungen und zweisprachige Beschreibung sind eingepflegt (`docs/itch-store-page.md`).
 
 ## Ergebnis
-[Wird beim Abarbeiten gefüllt: was konkret entstanden ist]
+1. `scripts/package-itch.mjs`: Automatisches Build- und ZIP-Skript für itch.io HTML5-Uploads (`npm run package:itch`), erzeugt `release/raid-realms-itch-html5.zip` (~32.7 MB inkl. aller 102 Assets).
+2. `package.json`: Skript `package:itch` hinterlegt.
+3. `docs/itch-store-page.md`: Komplette zweisprachige Store-Beschreibung (DE/EN), Tag-Liste (`deckbuilder`, `multiplayer`, `webrtc`, `dark-fantasy`), Viewport-Empfehlung (1280x720) und Feature-Bullet-Points.
 
 ## Notizen
-[Leer lassen. Beim Abarbeiten füllen: Entscheidungen, Abweichungen vom Plan, Datum.]
+Abgeschlossen am 2026-09-15. Export-Bundle ist 100% uploadbereit für itch.io.
