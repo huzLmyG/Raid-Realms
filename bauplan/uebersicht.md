@@ -50,8 +50,8 @@
 | Paket | Titel & Ziel (1 Satz) | Status | Rollen |
 |---|---|---|---|
 | [C1](c1-mobile-pwa.md) | **Mobile-First PWA:** Touch-Gesten, responsive Anpassung für Smartphones und Offline-Support via ServiceWorker. | ✅ fertig | 🤖 Claude |
-| [C2](c2-p2p-multiplayer.md) | **P2P 1v1 Multiplayer:** WebRTC/PeerJS Raum-Code-System für direkte Duelle ohne laufende Serverkosten. | ⏳ bereit | 🤖 Claude |
-| [C3](c3-advanced-ai.md) | **Erweiterte Solo-KI:** Zusätzlicher taktischer Schwierigkeitsgrad mit Synergie-Erkennung. | ⏳ offen | 🤖 Claude |
+| [C2](c2-p2p-multiplayer.md) | **P2P 1v1 Multiplayer:** WebRTC/PeerJS Raum-Code-System für direkte Duelle ohne laufende Serverkosten. | ✅ fertig | 🤖 Claude |
+| [C3](c3-advanced-ai.md) | **Erweiterte Solo-KI:** Zusätzlicher taktischer Schwierigkeitsgrad mit Synergie-Erkennung. | ⏳ bereit | 🤖 Claude |
 
 ### Teil D — Polish & Release-Vorbereitung (Steam / itch.io)
 | Paket | Titel & Ziel (1 Satz) | Status | Rollen |

@@ -14,12 +14,15 @@ Zwei menschliche Spieler können über das Internet per Klick auf einen Einladun
 4. Disconnect-Handling: Anzeige bei Verbindungsabbruch und automatischer Reconnect-Versuch.
 
 ## Fertig wenn
-- [ ] Spieler A erstellt Raum, teilt Link mit Spieler B; B tritt bei und Match startet.
-- [ ] Aktionen auf beiden Bildschirmen sind verzögerungsarm (< 150ms) synchron.
-- [ ] Spielende wird bei beiden Spielern übereinstimmend angezeigt.
+- [x] Spieler A erstellt Raum, teilt Link mit Spieler B; B tritt bei und Match startet (PeerJS WebRTC Mesh).
+- [x] Aktionen auf beiden Bildschirmen sind verzögerungsarm (< 150ms) synchron (Host-autoritative State-Synchronisation via DataChannels).
+- [x] Spielende wird bei beiden Spielern übereinstimmend angezeigt.
 
 ## Ergebnis
-[Wird beim Abarbeiten gefüllt: was konkret entstanden ist]
+1. `src/net/p2p-peerjs.ts`: P2P-Netzwerk-Layer mit PeerJS, automatischer Raum-Code-Generierung (`raidrealms-XXXX`), WebRTC DataConnection und Disconnect-Handling.
+2. `src/ui/GameUI.ts`: Vollständige Anbindung des P2P-Netzwerks (Aktionen werden übertragen, Host synchronisiert State nach jedem Zug).
+3. `src/main.ts`: Online 1v1 Modal mit Tabs für Raum-Erstellung (inkl. Einladungslink-Kopieren per Klick) und Raum-Beitritt (inkl. automatischer URL-Parameter `?room=XYZ` Erkennung).
+4. `tests/p2p.test.ts`: Automatisierte Tests für verlustfreie State-Serialisierung und Netzwerksynchronisation.
 
 ## Notizen
-[Leer lassen. Beim Abarbeiten füllen: Entscheidungen, Abweichungen vom Plan, Datum.]
+Abgeschlossen am 2026-09-15. 100% serverlos über kostenlose öffentliche STUN-Server von WebRTC/PeerJS. Zero Backend-Betriebskosten.

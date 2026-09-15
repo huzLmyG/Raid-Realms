@@ -7,16 +7,85 @@ import { renderMarketZone } from './components/MarketZone.ts';
 import { renderHandZone } from './components/HandZone.ts';
 import { SoundEngine } from './audio.ts';
 
+import { P2PNetwork, P2PAction } from '../net/p2p-peerjs.ts';
+
 export class GameUI {
   private container: HTMLElement;
   private state: GameState;
   private selectedAttackerSlot: number | null = null;
   private targetedSpellCard: CardInstance | null = null;
+  private p2p?: { network: P2PNetwork; myPlayerIndex: number };
 
-  constructor(container: HTMLElement, state: GameState) {
+  constructor(
+    container: HTMLElement,
+    state: GameState,
+    p2p?: { network: P2PNetwork; myPlayerIndex: number }
+  ) {
     this.container = container;
     this.state = state;
+    this.p2p = p2p;
+
+    if (this.p2p) {
+      this.setupP2PListeners();
+    }
+
     this.render();
+  }
+
+  private setupP2PListeners(): void {
+    if (!this.p2p) return;
+    const { network, myPlayerIndex } = this.p2p;
+
+    network.onActionReceived = (action: P2PAction) => {
+      const remotePlayerIndex = 1 - myPlayerIndex;
+
+      switch (action.type) {
+        case 'playCard':
+          if (action.cardUid) {
+            GameEngine.playCard(this.state, remotePlayerIndex, action.cardUid, action.target);
+            SoundEngine.playCard();
+          }
+          break;
+        case 'attack':
+          if (action.attackerSlot !== undefined && action.target) {
+            GameEngine.attackTarget(this.state, remotePlayerIndex, action.attackerSlot, action.target);
+            SoundEngine.damage();
+          }
+          break;
+        case 'buy':
+          if (action.marketSlot !== undefined) {
+            GameEngine.buyMarketCard(this.state, remotePlayerIndex, action.marketSlot);
+            SoundEngine.buy();
+          }
+          break;
+        case 'reroll':
+          GameEngine.rerollMarket(this.state, remotePlayerIndex);
+          SoundEngine.gold();
+          break;
+        case 'heroPower':
+          GameEngine.useHeroPower(this.state, remotePlayerIndex);
+          SoundEngine.playCard();
+          break;
+        case 'endTurn':
+          GameEngine.endTurn(this.state);
+          SoundEngine.turn();
+          break;
+      }
+
+      if (network.isHost) {
+        network.syncState(this.state);
+      }
+      this.render();
+    };
+
+    network.onStateSync = (syncedState: GameState) => {
+      this.state = syncedState;
+      this.render();
+    };
+
+    network.onDisconnected = () => {
+      alert('Der andere Spieler hat das Duell verlassen.');
+    };
   }
 
   public updateState(newState: GameState): void {
@@ -26,8 +95,8 @@ export class GameUI {
 
   public render(): void {
     this.container.innerHTML = '';
-    const myIndex = 0;
-    const enemyIndex = 1;
+    const myIndex = this.p2p ? this.p2p.myPlayerIndex : 0;
+    const enemyIndex = 1 - myIndex;
     const isMyTurn = this.state.activePlayerIndex === myIndex;
     const me = this.state.players[myIndex];
     const enemy = this.state.players[enemyIndex];
@@ -78,23 +147,38 @@ export class GameUI {
       playerGold: me.gold,
       isMyTurn,
       onBuyCard: (slotIndex) => {
+        if (!isMyTurn) return;
         SoundEngine.buy();
         GameEngine.buyMarketCard(this.state, myIndex, slotIndex);
+        if (this.p2p) {
+          this.p2p.network.sendAction({ type: 'buy', marketSlot: slotIndex });
+          if (this.p2p.network.isHost) this.p2p.network.syncState(this.state);
+        }
         this.render();
       },
       onReroll: () => {
+        if (!isMyTurn) return;
         SoundEngine.gold();
         GameEngine.rerollMarket(this.state, myIndex);
+        if (this.p2p) {
+          this.p2p.network.sendAction({ type: 'reroll' });
+          if (this.p2p.network.isHost) this.p2p.network.syncState(this.state);
+        }
         this.render();
       },
       onEndTurn: () => {
+        if (!isMyTurn) return;
         SoundEngine.turn();
         this.clearTargetMode();
         GameEngine.endTurn(this.state);
+        if (this.p2p) {
+          this.p2p.network.sendAction({ type: 'endTurn' });
+          if (this.p2p.network.isHost) this.p2p.network.syncState(this.state);
+        }
         this.render();
 
         // Wenn Gegner AI ist, lassen wir ihn nach einer kurzen Pause ziehen
-        if (this.state.players[1].isAI && !this.state.over) {
+        if (!this.p2p && this.state.players[1].isAI && !this.state.over) {
           setTimeout(() => this.runAITurn(), 600);
         }
       }
@@ -137,6 +221,10 @@ export class GameUI {
         if (card.type === 'unit' || card.type === 'building' || card.type === 'resource' || card.aoe || !card.damage) {
           SoundEngine.playCard();
           GameEngine.playCard(this.state, myIndex, card.uid);
+          if (this.p2p) {
+            this.p2p.network.sendAction({ type: 'playCard', cardUid: card.uid });
+            if (this.p2p.network.isHost) this.p2p.network.syncState(this.state);
+          }
           this.render();
         } else {
           // Schadenszauber benötigt Ziel
@@ -159,6 +247,10 @@ export class GameUI {
         if (isMyTurn && me.gold >= 2 && !me.heroPowerUsed) {
           SoundEngine.playCard();
           GameEngine.useHeroPower(this.state, myIndex);
+          if (this.p2p) {
+            this.p2p.network.sendAction({ type: 'heroPower' });
+            if (this.p2p.network.isHost) this.p2p.network.syncState(this.state);
+          }
           this.render();
         }
       }
@@ -228,16 +320,32 @@ export class GameUI {
   }
 
   private handleTargetSelected(target: TargetRef): void {
-    const myIndex = 0;
+    const myIndex = this.p2p ? this.p2p.myPlayerIndex : 0;
 
     if (this.selectedAttackerSlot !== null) {
       SoundEngine.damage();
       GameEngine.attackTarget(this.state, myIndex, this.selectedAttackerSlot, target);
+      if (this.p2p) {
+        this.p2p.network.sendAction({
+          type: 'attack',
+          attackerSlot: this.selectedAttackerSlot,
+          target
+        });
+        if (this.p2p.network.isHost) this.p2p.network.syncState(this.state);
+      }
       this.clearTargetMode();
       this.render();
     } else if (this.targetedSpellCard !== null) {
       SoundEngine.playCard();
       GameEngine.playCard(this.state, myIndex, this.targetedSpellCard.uid, target);
+      if (this.p2p) {
+        this.p2p.network.sendAction({
+          type: 'playCard',
+          cardUid: this.targetedSpellCard.uid,
+          target
+        });
+        if (this.p2p.network.isHost) this.p2p.network.syncState(this.state);
+      }
       this.clearTargetMode();
       this.render();
     }
