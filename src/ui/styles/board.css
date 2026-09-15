@@ -442,3 +442,214 @@
   }
 }
 
+/* ===== VS SCREEN OVERLAY ===== */
+#vs-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: none;
+  overflow: hidden;
+  background: #04020a;
+}
+#vs-overlay.active { display: block; }
+
+.vs-panel {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.vs-panel.left {
+  left: 0;
+  transform: translateX(-110%);
+}
+.vs-panel.right {
+  right: 0;
+  transform: translateX(110%);
+}
+
+.vs-panel.slide-in.left { animation: vsSlideInLeft 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.vs-panel.slide-in.right { animation: vsSlideInRight 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.vs-panel.slide-out { animation: vsSlideOut 0.6s cubic-bezier(0.55, 0, 1, 0.45) forwards; }
+
+@keyframes vsSlideInLeft { from { transform: translateX(-110%); } to { transform: translateX(0); } }
+@keyframes vsSlideInRight { from { transform: translateX(110%); } to { transform: translateX(0); } }
+@keyframes vsSlideOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100%); } }
+
+.vs-avatar {
+  width: clamp(100px, 18vh, 160px);
+  height: clamp(100px, 18vh, 160px);
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid var(--gold);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(240, 192, 64, 0.4);
+  animation: vsPulse 2s ease-in-out infinite;
+}
+.vs-avatar img { width: 100%; height: 100%; object-fit: cover; }
+@keyframes vsPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
+.vs-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.4rem, 3vh, 2.2rem);
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+  letter-spacing: 0.1rem;
+}
+
+.vs-race {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.9rem, 1.8vh, 1.2rem);
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.15rem;
+}
+
+.vs-divider {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10001;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(3.5rem, 8vh, 6rem);
+  font-weight: 900;
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(240, 192, 64, 0.9), 0 0 80px rgba(224, 32, 64, 0.7), 0 4px 20px rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.vs-divider.pop { animation: vsPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+@keyframes vsPop { from { opacity: 0; transform: translate(-50%, -50%) scale(3.5); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+.vs-divider.fade-out { animation: vsFadeOut 0.45s ease forwards; }
+@keyframes vsFadeOut { from { opacity: 1; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(-50%, -50%) scale(0.4); } }
+
+#vs-overlay.shake { animation: vsShake 0.5s ease; }
+@keyframes vsShake {
+  0%, 100% { transform: translate(0); }
+  15% { transform: translate(-8px, 5px); }
+  30% { transform: translate(8px, -5px); }
+  45% { transform: translate(-6px, 3px); }
+  60% { transform: translate(6px, -3px); }
+  75% { transform: translate(-3px, 1px); }
+}
+
+.vs-skip-hint {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--txt2);
+  font-size: 0.85rem;
+  letter-spacing: 0.1rem;
+  opacity: 0.7;
+  z-index: 10002;
+  cursor: pointer;
+}
+
+/* ===== TURN BANNER ===== */
+.turn-banner {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9500;
+  pointer-events: none;
+  text-align: center;
+  animation: bannerPop 1.6s ease-out forwards;
+}
+
+.turn-banner.player-turn .turn-banner-title {
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(240, 192, 64, 0.9), 0 4px 15px #000;
+}
+
+.turn-banner.enemy-turn .turn-banner-title {
+  color: var(--blood);
+  text-shadow: 0 0 30px rgba(224, 32, 64, 0.9), 0 4px 15px #000;
+}
+
+.turn-banner-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2rem, 5vh, 3.2rem);
+  font-weight: 900;
+  letter-spacing: 0.15rem;
+}
+
+.turn-banner-sub {
+  font-size: clamp(0.9rem, 2vh, 1.2rem);
+  color: var(--txt2);
+  margin-top: 0.2rem;
+  letter-spacing: 0.1rem;
+}
+
+@keyframes bannerPop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(2.2); }
+  15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -65%) scale(0.85); }
+}
+
+/* ===== DAMAGE VIGNETTE ===== */
+.damage-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9990;
+  box-shadow: inset 0 0 80px 30px rgba(220, 20, 40, 0.55), inset 0 0 160px 60px rgba(160, 10, 20, 0.35);
+  animation: vigFade 0.6s ease-out forwards;
+}
+@keyframes vigFade {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ===== CARD PLAY ARC ===== */
+@keyframes cardFlyUp {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  50% { transform: translateY(-70px) scale(0.8); opacity: 0.7; }
+  100% { transform: translateY(-130px) scale(0.3); opacity: 0; }
+}
+.card.playing {
+  animation: cardFlyUp 0.35s ease-in forwards !important;
+  pointer-events: none;
+}
+
+/* Card error shake */
+@keyframes cardShake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-6px) rotate(-2deg); }
+  30% { transform: translateX(6px) rotate(2deg); }
+  45% { transform: translateX(-4px) rotate(-1deg); }
+  60% { transform: translateX(4px) rotate(1deg); }
+  75% { transform: translateX(-2px); }
+  90% { transform: translateX(2px); }
+}
+.card.shake-err {
+  animation: cardShake 0.4s ease !important;
+  border-color: var(--blood) !important;
+}
+
+/* ===== FANNED HAND CARDS ===== */
+.hand-zone .card:nth-child(1) { transform: rotate(-3deg) translateY(2px); }
+.hand-zone .card:nth-child(2) { transform: rotate(-1.5deg) translateY(0px); }
+.hand-zone .card:nth-child(3) { transform: rotate(0deg) translateY(-2px); }
+.hand-zone .card:nth-child(4) { transform: rotate(1.5deg) translateY(0px); }
+.hand-zone .card:nth-child(5) { transform: rotate(3deg) translateY(2px); }
+.hand-zone .card:nth-child(6) { transform: rotate(4.5deg) translateY(4px); }
+.hand-zone .card:nth-child(7) { transform: rotate(6deg) translateY(6px); }
+
+.hand-zone .card:hover {
+  transform: translateY(-24px) rotate(0deg) scale(1.18) !important;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9), 0 0 25px rgba(240, 192, 64, 0.25) !important;
+  z-index: 200 !important;
+}
+
+

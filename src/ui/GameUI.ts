@@ -199,6 +199,17 @@ export class GameUI {
         if (!unit || !isMyTurn) return;
 
         if (unit.summoned) {
+          const unitCards = this.container.querySelectorAll('.my-board .units-section .card');
+          let uIdx = 0;
+          for (let s = 0; s <= slotIndex; s++) {
+            if (me.units[s]) {
+              if (s === slotIndex && unitCards[uIdx]) {
+                Juice.shakeElement(unitCards[uIdx] as HTMLElement);
+                break;
+              }
+              uIdx++;
+            }
+          }
           SoundEngine.error();
           return;
         }
@@ -222,8 +233,14 @@ export class GameUI {
       onCardClick: (card) => {
         if (!isMyTurn) return;
 
+        if (me.gold < card.cost) {
+          SoundEngine.error();
+          return;
+        }
+
         // Wenn Karte direkt ausgeführt werden kann (kein manuelles Single-Target)
         if (card.type === 'unit' || card.type === 'building' || card.type === 'resource' || card.aoe || !card.damage) {
+          SoundEngine.swoosh();
           SoundEngine.playCard();
           GameEngine.playCard(this.state, myIndex, card.uid);
           if (this.p2p) {
@@ -312,6 +329,13 @@ export class GameUI {
       layout.appendChild(overOverlay);
     }
 
+    // Initial Turn Banner
+    if (this.state.turn === 1 && !this.state.over) {
+      setTimeout(() => {
+        Juice.showTurnBanner(isMyTurn ? 'DEIN ZUG' : 'GEGNER AM ZUG', `Runde ${this.state.turn}`, isMyTurn);
+      }, 300);
+    }
+
     this.container.appendChild(layout);
   }
 
@@ -326,36 +350,115 @@ export class GameUI {
 
   private handleTargetSelected(target: TargetRef): void {
     const myIndex = this.p2p ? this.p2p.myPlayerIndex : 0;
+    const enemyIndex = 1 - myIndex;
+    const me = this.state.players[myIndex];
 
     if (this.selectedAttackerSlot !== null) {
-      SoundEngine.damage();
-      Juice.shakeScreen(false);
-      GameEngine.attackTarget(this.state, myIndex, this.selectedAttackerSlot, target);
-      if (this.p2p) {
-        this.p2p.network.sendAction({
-          type: 'attack',
-          attackerSlot: this.selectedAttackerSlot,
-          target
-        });
-        if (this.p2p.network.isHost) this.p2p.network.syncState(this.state);
+      const attackerSlot = this.selectedAttackerSlot;
+      const attackerUnit = me.units[attackerSlot];
+      const dmg = (attackerUnit?.attack ?? 0) + (attackerUnit?.upgrades ?? 0);
+
+      // DOM targets for physical dash
+      const attackerCards = this.container.querySelectorAll('.my-board .units-section .card');
+      let attackerEl: HTMLElement | null = null;
+      let cardIdx = 0;
+      for (let s = 0; s <= attackerSlot; s++) {
+        if (me.units[s]) {
+          if (s === attackerSlot) {
+            attackerEl = attackerCards[cardIdx] as HTMLElement;
+            break;
+          }
+          cardIdx++;
+        }
       }
+
+      let targetEl: HTMLElement | null = null;
+      if (target.type === 'player') {
+        targetEl = this.container.querySelector('.p-bar.enemy .p-avatar');
+      } else if (target.type === 'unit' && target.slotIndex !== undefined) {
+        const enemyCards = this.container.querySelectorAll('.enemy-board .units-section .card');
+        const enemy = this.state.players[enemyIndex];
+        let eIdx = 0;
+        for (let s = 0; s <= target.slotIndex; s++) {
+          if (enemy.units[s]) {
+            if (s === target.slotIndex) {
+              targetEl = enemyCards[eIdx] as HTMLElement;
+              break;
+            }
+            eIdx++;
+          }
+        }
+      } else if (target.type === 'building' && target.buildingUid) {
+        targetEl = this.container.querySelector('.enemy-board .buildings-section .card');
+      }
+
       this.clearTargetMode();
-      this.render();
+
+      const executeAttack = () => {
+        SoundEngine.damage();
+        const isHeavy = dmg >= 5;
+        Juice.shakeScreen(isHeavy);
+
+        if (targetEl) {
+          const rect = targetEl.getBoundingClientRect();
+          Juice.showFloatingText(`-${dmg} ❤️`, rect.left + rect.width / 2, rect.top + rect.height / 2, 'damage');
+          if (target.type === 'player') {
+            Juice.showBloodVignette();
+          }
+        }
+
+        GameEngine.attackTarget(this.state, myIndex, attackerSlot, target);
+
+        if (this.p2p) {
+          this.p2p.network.sendAction({
+            type: 'attack',
+            attackerSlot,
+            target
+          });
+          if (this.p2p.network.isHost) this.p2p.network.syncState(this.state);
+        }
+
+        this.render();
+      };
+
+      if (attackerEl && targetEl) {
+        Juice.animateAttack(attackerEl, targetEl, executeAttack);
+      } else {
+        executeAttack();
+      }
+
     } else if (this.targetedSpellCard !== null) {
+      const spellCard = this.targetedSpellCard;
+      this.clearTargetMode();
+
       SoundEngine.playCard();
-      const isHeavy = (this.targetedSpellCard.damage ?? 0) >= 6;
+      const dmg = spellCard.damage ?? 0;
+      const isHeavy = dmg >= 6;
       Juice.shakeScreen(isHeavy);
-      Juice.burst(window.innerWidth / 2, 120, '#ff3344', isHeavy ? 35 : 18);
-      GameEngine.playCard(this.state, myIndex, this.targetedSpellCard.uid, target);
+
+      let targetEl: HTMLElement | null = null;
+      if (target.type === 'player') {
+        targetEl = this.container.querySelector('.p-bar.enemy .p-avatar');
+      } else if (target.type === 'unit') {
+        targetEl = this.container.querySelector('.enemy-board .units-section .card');
+      }
+
+      if (targetEl && dmg > 0) {
+        const rect = targetEl.getBoundingClientRect();
+        Juice.burst(rect.left + rect.width / 2, rect.top + rect.height / 2, '#ff3344', isHeavy ? 30 : 18);
+        Juice.showFloatingText(`-${dmg} 💥`, rect.left + rect.width / 2, rect.top + rect.height / 2, 'damage');
+        if (target.type === 'player') Juice.showBloodVignette();
+      }
+
+      GameEngine.playCard(this.state, myIndex, spellCard.uid, target);
       if (this.p2p) {
         this.p2p.network.sendAction({
           type: 'playCard',
-          cardUid: this.targetedSpellCard.uid,
+          cardUid: spellCard.uid,
           target
         });
         if (this.p2p.network.isHost) this.p2p.network.syncState(this.state);
       }
-      this.clearTargetMode();
       this.render();
     }
   }
@@ -366,5 +469,13 @@ export class GameUI {
     BotAgent.playTurn(this.state, aiIndex, this.aiDifficulty);
     SoundEngine.turn();
     this.render();
+
+    // Turn banner for player's turn
+    if (!this.state.over) {
+      setTimeout(() => {
+        Juice.showTurnBanner('DEIN ZUG', `Runde ${this.state.turn}`, true);
+      }, 250);
+    }
   }
 }
+

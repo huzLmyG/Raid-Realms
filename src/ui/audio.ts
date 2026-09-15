@@ -130,5 +130,12 @@ export const SoundEngine = {
     [400, 350, 300, 220].forEach((f, i) => {
       setTimeout(() => playTone(f, 'sawtooth', 0.3, 0.15, 0.4), i * 150);
     });
+  },
+  vsImpact: () => {
+    playTone(65, 'sine', 0.5, 0.35, 0.25);
+    playNoise(0.2, 0.12);
+  },
+  swoosh: () => {
+    playTone(320, 'sine', 0.08, 0.08, 1.8);
   }
 };

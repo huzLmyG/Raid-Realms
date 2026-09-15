@@ -118,6 +118,62 @@ class JuiceSystem {
       floater.remove();
     }, 1000);
   }
+
+  public animateAttack(attackerEl: HTMLElement, targetEl: HTMLElement, onImpact: () => void): void {
+    const aRect = attackerEl.getBoundingClientRect();
+    const tRect = targetEl.getBoundingClientRect();
+    const dx = (tRect.left + tRect.width / 2) - (aRect.left + aRect.width / 2);
+    const dy = (tRect.top + tRect.height / 2) - (aRect.top + aRect.height / 2);
+
+    attackerEl.style.transition = 'transform 0.18s cubic-bezier(0.2, 0.9, 0.3, 1.2)';
+    attackerEl.style.zIndex = '500';
+    attackerEl.style.transform = `translate(${dx * 0.65}px, ${dy * 0.65}px) scale(1.15)`;
+
+    setTimeout(() => {
+      onImpact();
+      this.burst(tRect.left + tRect.width / 2, tRect.top + tRect.height / 2, '#ff3344', 22);
+
+      // Recoil
+      attackerEl.style.transition = 'transform 0.22s cubic-bezier(0.4, 0, 0.2, 1)';
+      attackerEl.style.transform = '';
+      setTimeout(() => {
+        attackerEl.style.zIndex = '';
+        attackerEl.style.transition = '';
+      }, 220);
+    }, 180);
+  }
+
+  public showTurnBanner(title: string, subtitle?: string, isPlayer = true): void {
+    const existing = document.querySelector('.turn-banner');
+    if (existing) existing.remove();
+
+    const banner = document.createElement('div');
+    banner.className = `turn-banner ${isPlayer ? 'player-turn' : 'enemy-turn'}`;
+    banner.innerHTML = `
+      <div class="turn-banner-title">${title}</div>
+      ${subtitle ? `<div class="turn-banner-sub">${subtitle}</div>` : ''}
+    `;
+    document.body.appendChild(banner);
+    setTimeout(() => banner.remove(), 1600);
+  }
+
+  public showBloodVignette(): void {
+    const existing = document.querySelector('.damage-vignette');
+    if (existing) existing.remove();
+
+    const vig = document.createElement('div');
+    vig.className = 'damage-vignette';
+    document.body.appendChild(vig);
+    setTimeout(() => vig.remove(), 600);
+  }
+
+  public shakeElement(el: HTMLElement): void {
+    el.classList.remove('shake-err');
+    void el.offsetWidth;
+    el.classList.add('shake-err');
+    setTimeout(() => el.classList.remove('shake-err'), 450);
+  }
 }
 
 export const Juice = new JuiceSystem();
+

@@ -9,6 +9,7 @@ import { RACES } from './core/cards.data.ts';
 import { getCardImagePath } from './assets/card-images.ts';
 import { GameUI } from './ui/GameUI.ts';
 import { SoundEngine } from './ui/audio.ts';
+import { showVsScreen } from './ui/components/VsScreen.ts';
 
 import { P2PNetwork } from './net/p2p-peerjs.ts';
 
@@ -255,13 +256,14 @@ function renderStartScreen(): void {
 
     activeP2PNetwork.onConnected = (guestName, guestRace) => {
       SoundEngine.victory();
-      const state = GameEngine.createGame(
-        { name: 'Host (Du)', race: selectedP1Race, isAI: false },
-        { name: `${guestName}`, race: guestRace, isAI: false }
-      );
+      const p1 = { name: 'Host (Du)', race: selectedP1Race, isAI: false };
+      const p2 = { name: `${guestName}`, race: guestRace, isAI: false };
+      const state = GameEngine.createGame(p1, p2);
       activeP2PNetwork!.sendGameStart(state);
       p2pModal?.classList.remove('open');
-      new GameUI(app, state, { network: activeP2PNetwork!, myPlayerIndex: 0 });
+      showVsScreen(p1, p2, () => {
+        new GameUI(app, state, { network: activeP2PNetwork!, myPlayerIndex: 0 });
+      });
     };
   });
 
@@ -277,7 +279,11 @@ function renderStartScreen(): void {
     activeP2PNetwork.onGameStart = (initialState) => {
       SoundEngine.victory();
       p2pModal?.classList.remove('open');
-      new GameUI(app, initialState, { network: activeP2PNetwork!, myPlayerIndex: 1 });
+      const p1 = { name: initialState.players[0].name, race: initialState.players[0].race };
+      const p2 = { name: initialState.players[1].name, race: initialState.players[1].race };
+      showVsScreen(p1, p2, () => {
+        new GameUI(app, initialState, { network: activeP2PNetwork!, myPlayerIndex: 1 });
+      });
     };
 
     activeP2PNetwork.onError = (err) => {
@@ -305,17 +311,20 @@ function renderStartScreen(): void {
 }
 
 function startGame(): void {
-  const state = GameEngine.createGame(
-    { name: 'Spieler', race: selectedP1Race, isAI: false },
-    {
-      name: selectedMode === 'ai' ? `KI (${selectedDifficulty === 'hard' ? 'Taktisch' : 'Normal'})` : 'Spieler 2',
-      race: selectedP2Race,
-      isAI: selectedMode === 'ai'
-    }
-  );
+  const p1 = { name: 'Spieler', race: selectedP1Race, isAI: false };
+  const p2 = {
+    name: selectedMode === 'ai' ? `KI (${selectedDifficulty === 'hard' ? 'Taktisch' : 'Normal'})` : 'Spieler 2',
+    race: selectedP2Race,
+    isAI: selectedMode === 'ai'
+  };
 
-  new GameUI(app, state, undefined, selectedDifficulty);
+  const state = GameEngine.createGame(p1, p2);
+
+  showVsScreen(p1, p2, () => {
+    new GameUI(app, state, undefined, selectedDifficulty);
+  });
 }
+
 
 // Service Worker Registration for PWA Offline Support
 if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {

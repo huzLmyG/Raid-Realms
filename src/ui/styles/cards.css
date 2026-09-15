@@ -33,11 +33,64 @@
   border-color: #a040ff;
   box-shadow: 0 0 8px rgba(160, 64, 255, 0.3);
 }
+.card.rarity-epic::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(180, 80, 255, 0.22) 50%,
+    transparent 70%
+  );
+  transform: rotate(-25deg);
+  animation: epicShine 4.5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0.6;
+}
+@keyframes epicShine {
+  0% { transform: translateX(-100%) rotate(-25deg); }
+  50% { transform: translateX(100%) rotate(-25deg); }
+  100% { transform: translateX(100%) rotate(-25deg); }
+}
+
 .card.rarity-legendary {
   border-color: var(--gold) !important;
   box-shadow: 0 0 14px rgba(240, 192, 64, 0.5), inset 0 0 8px rgba(240, 192, 64, 0.1) !important;
   animation: legGlow 2s ease-in-out infinite;
 }
+.card.rarity-legendary::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(255, 215, 0, 0.2) 35%,
+    rgba(255, 100, 255, 0.3) 45%,
+    rgba(0, 240, 255, 0.3) 55%,
+    rgba(255, 215, 0, 0.2) 65%,
+    transparent 80%
+  );
+  transform: rotate(-25deg);
+  animation: holoFoil 3.6s linear infinite;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0.75;
+  mix-blend-mode: color-dodge;
+}
+@keyframes holoFoil {
+  0% { transform: translateX(-90%) translateY(-30%) rotate(-25deg); }
+  100% { transform: translateX(90%) translateY(30%) rotate(-25deg); }
+}
+
 @keyframes legGlow {
   0%, 100% { box-shadow: 0 0 10px rgba(240, 192, 64, 0.4); }
   50% { box-shadow: 0 0 22px rgba(240, 192, 64, 0.7); }
@@ -48,6 +101,7 @@
   box-shadow: 0 0 12px rgba(139, 0, 0, 0.6) !important;
   background: linear-gradient(135deg, #1a0008, #0a0004) !important;
 }
+
 
 /* Hand cards hover */
 .hand-zone .card {
