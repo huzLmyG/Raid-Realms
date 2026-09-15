@@ -72,13 +72,25 @@ export function createCardElement(
     `;
   }
 
-  // Keywords
+  // Keywords with Tooltips
+  const KEYWORD_TOOLTIPS: Record<string, string> = {
+    taunt: 'TAUNT: Feinde MÜSSEN diese Einheit zuerst angreifen!',
+    charge: 'CHARGE: Kann sofort im selben Zug angreifen!',
+    lifesteal: 'LIFESTEAL: Schaden heilt deinen Helden!',
+    fortify: 'FORTIFY: Blockiert Angriffe auf den Helden!'
+  };
+
   let kwHtml = '';
   if (card.keywords && card.keywords.length > 0) {
-    kwHtml = card.keywords.map(kw => `<span class="kw">${kw.toUpperCase()}</span>`).join(' ');
+    kwHtml = card.keywords
+      .map(kw => {
+        const tip = KEYWORD_TOOLTIPS[kw.toLowerCase()] || kw.toUpperCase();
+        return `<span class="kw" title="${tip}">${kw.toUpperCase()}</span>`;
+      })
+      .join(' ');
   }
   if (card.fortify) {
-    kwHtml += ' <span class="fortify-badge">FORTIFY</span>';
+    kwHtml += ` <span class="fortify-badge" title="${KEYWORD_TOOLTIPS.fortify}">FORTIFY</span>`;
   }
 
   el.innerHTML = `

@@ -6,6 +6,7 @@ import { renderBoardArea } from './components/BoardZone.ts';
 import { renderMarketZone } from './components/MarketZone.ts';
 import { renderHandZone } from './components/HandZone.ts';
 import { SoundEngine } from './audio.ts';
+import { Juice } from './particles.ts';
 
 import { P2PNetwork, P2PAction } from '../net/p2p-peerjs.ts';
 
@@ -152,6 +153,7 @@ export class GameUI {
       onBuyCard: (slotIndex) => {
         if (!isMyTurn) return;
         SoundEngine.buy();
+        Juice.burst(window.innerWidth / 2, window.innerHeight / 2, '#f0c040', 25);
         GameEngine.buyMarketCard(this.state, myIndex, slotIndex);
         if (this.p2p) {
           this.p2p.network.sendAction({ type: 'buy', marketSlot: slotIndex });
@@ -327,6 +329,7 @@ export class GameUI {
 
     if (this.selectedAttackerSlot !== null) {
       SoundEngine.damage();
+      Juice.shakeScreen(false);
       GameEngine.attackTarget(this.state, myIndex, this.selectedAttackerSlot, target);
       if (this.p2p) {
         this.p2p.network.sendAction({
@@ -340,6 +343,9 @@ export class GameUI {
       this.render();
     } else if (this.targetedSpellCard !== null) {
       SoundEngine.playCard();
+      const isHeavy = (this.targetedSpellCard.damage ?? 0) >= 6;
+      Juice.shakeScreen(isHeavy);
+      Juice.burst(window.innerWidth / 2, 120, '#ff3344', isHeavy ? 35 : 18);
       GameEngine.playCard(this.state, myIndex, this.targetedSpellCard.uid, target);
       if (this.p2p) {
         this.p2p.network.sendAction({

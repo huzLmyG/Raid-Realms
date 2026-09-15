@@ -64,8 +64,8 @@
 ### Teil D — Polish & Release-Vorbereitung (Steam / itch.io)
 | Paket | Titel & Ziel (1 Satz) | Status | Rollen |
 |---|---|---|---|
-| [D1](d1-audiovisual-polish.md) | **Audio- & Visual-Polish:** Dynamische Web Audio Effekte, Partikel und Treffer-Animationen verfeinern. | ⏳ bereit | 🤖 Claude |
-| [D2](d2-itch-launch.md) | **itch.io Veröffentlichung:** Öffentlicher Store-Auftritt auf itch.io mit spielbarem Web-Build. | ⏳ offen | 👤 Nutzer / 🤖 Claude |
+| [D1](d1-audiovisual-polish.md) | **Audio- & Visual-Polish:** Dynamische Web Audio Effekte, Partikel und Treffer-Animationen verfeinern. | ✅ fertig | 🤖 Claude |
+| [D2](d2-itch-launch.md) | **itch.io Veröffentlichung:** Öffentlicher Store-Auftritt auf itch.io mit spielbarem Web-Build. | ⏳ bereit | 👤 Nutzer / 🤖 Claude |
 | [D3](d3-tauri-steam-build.md) | **Tauri Desktop-Packaging:** Kompilierung einer nativen Windows-Executable als Vorbereitung für Steam. | ⏳ offen | 🤖 Claude |
 
 ---

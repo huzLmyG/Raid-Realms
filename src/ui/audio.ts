@@ -1,6 +1,7 @@
 // Web Audio Synthesizer Engine for Raid Realms
 
 let audioCtx: AudioContext | null = null;
+let isMuted: boolean = typeof localStorage !== 'undefined' && localStorage.getItem('raid_realms_muted') === 'true';
 
 function getAudioContext(): AudioContext | null {
   if (typeof window === 'undefined') return null;
@@ -17,6 +18,7 @@ function getAudioContext(): AudioContext | null {
 }
 
 function playTone(freq: number, type: OscillatorType, duration: number, volume = 0.15, decay = 0.8): void {
+  if (isMuted) return;
   try {
     const ctx = getAudioContext();
     if (!ctx) return;
@@ -41,6 +43,7 @@ function playTone(freq: number, type: OscillatorType, duration: number, volume =
 }
 
 function playNoise(duration: number, volume = 0.08): void {
+  if (isMuted) return;
   try {
     const ctx = getAudioContext();
     if (!ctx) return;
@@ -70,6 +73,14 @@ function playNoise(duration: number, volume = 0.08): void {
 }
 
 export const SoundEngine = {
+  isMuted: () => isMuted,
+  toggleMute: (): boolean => {
+    isMuted = !isMuted;
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('raid_realms_muted', isMuted ? 'true' : 'false');
+    }
+    return isMuted;
+  },
   playCard: () => {
     playTone(440, 'sine', 0.12);
     playTone(660, 'sine', 0.08, 0.06);

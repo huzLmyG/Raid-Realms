@@ -1,6 +1,7 @@
 import { PlayerState } from '../../core/types.ts';
 import { RACES } from '../../core/cards.data.ts';
 import { getCardImagePath } from '../../assets/card-images.ts';
+import { SoundEngine } from '../audio.ts';
 
 export interface PlayerBarOptions {
   isMine: boolean;
@@ -47,6 +48,9 @@ export function renderPlayerBar(
         <span class="hp-icon">⚡</span>
         <span class="hp-cost">2</span>
       </button>
+      <button class="mode-btn" id="btn-sound-toggle" style="padding:0.3rem 0.6rem;font-size:1rem;" title="Ton an/aus">
+        ${SoundEngine.isMuted() ? '🔇' : '🔊'}
+      </button>
     ` : ''}
 
     <div class="p-info">
@@ -69,12 +73,21 @@ export function renderPlayerBar(
     });
   }
 
-  if (options.isMine && options.onHeroPowerClick) {
+  if (options.isMine) {
     const hpBtn = bar.querySelector('#hero-power-btn');
-    if (hpBtn) {
+    if (hpBtn && options.onHeroPowerClick) {
       hpBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         options.onHeroPowerClick!();
+      });
+    }
+
+    const soundBtn = bar.querySelector('#btn-sound-toggle');
+    if (soundBtn) {
+      soundBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const muted = SoundEngine.toggleMute();
+        soundBtn.textContent = muted ? '🔇' : '🔊';
       });
     }
   }

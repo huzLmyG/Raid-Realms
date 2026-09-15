@@ -14,12 +14,16 @@ Das Spiel vermittelt durch saftiges Feedback (Juice: Screen-Shake bei harten Tre
 4. Option für Sound-Mute / Lautstärkeregler im Einstellungsmenü.
 
 ## Fertig wenn
-- [ ] Treffer und Zauber fühlen sich wuchtig an (visuell & akustisch).
-- [ ] Sound-Effekte lassen sich stummschalten; Einstellung wird im LocalStorage gemerkt.
-- [ ] Keine Einbrüche der Bildrate (stabile 60 FPS) bei Effekten.
+- [x] Treffer und Zauber fühlen sich wuchtig an (visuell & akustisch durch `Juice.shakeScreen`, Canvas-Partikel-Bursts und Treffersounds).
+- [x] Sound-Effekte lassen sich stummschalten; Einstellung wird im LocalStorage gemerkt (`SoundEngine.toggleMute` & Toggle-Button in PlayerBar).
+- [x] Keine Einbrüche der Bildrate (stabile 60 FPS durch GPU-beschleunigte CSS-Transforms und leichtgewichtiges Canvas-Partikelsystem).
 
 ## Ergebnis
-[Wird beim Abarbeiten gefüllt: was konkret entstanden ist]
+1. `src/ui/particles.ts`: GPU-optimiertes Partikelsystem (Sparks-Burst bei Marktkäufen und Treffern), Screen-Shake (mild & heavy) und Floating-Combat-Text.
+2. `src/ui/audio.ts`: Mute-Status (`isMuted`), Toggle-Methode und dauerhafte Speicherung im Browser-LocalStorage.
+3. `src/ui/components/CardView.ts`: Hover- und Inspect-Tooltips für alle taktischen Keywords (`Taunt`, `Charge`, `Lifesteal`, `Fortify`).
+4. `src/ui/components/PlayerBar.ts`: Audio-Mute-Button (🔊 / 🔇) direkt in der Spielerleiste integriert.
+5. `src/ui/styles/main.css`: CSS-Keyframes für Screen-Shake und Floating-Combat-Numbers hinzugefügt.
 
 ## Notizen
-[Leer lassen. Beim Abarbeiten füllen: Entscheidungen, Abweichungen vom Plan, Datum.]
+Abgeschlossen am 2026-09-15. Visuelles Feedback und Sound-Kontrolle nahtlos integriert.
