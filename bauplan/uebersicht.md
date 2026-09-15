@@ -58,7 +58,7 @@
 ### Parallelstrang — Organisation & Recht
 | Paket | Titel & Ziel (1 Satz) | Wann | Rollen |
 |---|---|---|---|
-| [O1](o1-recht-impressum.md) | **Impressum & Datenschutz:** Rechtssicheres § 5 DDG Impressum und Datenschutzerklärung für Web-Hosting. | vor B1 | 👤 Nutzer / 🤖 Claude |
-| [O2](o2-ai-act-kennzeichnung.md) | **EU AI Act Kennzeichnung:** Transparenzhinweis zu KI-generierten Kartengrafiken einbinden. | vor B1 | 🤖 Claude |
+| [O1](o1-recht-impressum.md) | **Impressum & Datenschutz:** Rechtssicheres § 5 DDG Impressum und Datenschutzerklärung für Web-Hosting. | ✅ fertig | 👤 Nutzer / 🤖 Claude |
+| [O2](o2-ai-act-kennzeichnung.md) | **EU AI Act Kennzeichnung:** Transparenzhinweis zu KI-generierten Kartengrafiken einbinden. | ✅ fertig | 🤖 Claude |
 | [O3](o3-name-branding.md) | **Namensfindung & Marken-Check:** Finalen Titel festlegen und DPMA-Register kurz prüfen. | vor D2 | 👤 Nutzer |
 | [O4](o4-foerderung.md) | **Förderungs-Check (optional):** Regionale Prototypenförderung (z.B. Gamecity/NRW) sichten. | flexibel | 👤 Nutzer |

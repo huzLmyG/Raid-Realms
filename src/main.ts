@@ -43,6 +43,7 @@ function renderStartScreen(): void {
           <button class="mode-btn ${selectedMode === 'ai' ? 'sel' : ''}" id="mode-ai">🤖 vs KI</button>
           <button class="mode-btn ${selectedMode === 'pvp' ? 'sel' : ''}" id="mode-pvp">⚔️ PvP (Lokal)</button>
           <button class="mode-btn" id="btn-rules">📖 Spielregeln</button>
+          <button class="mode-btn" id="btn-legal">⚖️ Impressum & Credits</button>
         </div>
 
         <div class="race-grid" id="race-grid">
@@ -82,6 +83,30 @@ function renderStartScreen(): void {
         </ul>
       </div>
     </div>
+
+    <!-- Legal & Credits Modal -->
+    <div class="modal-overlay" id="legal-modal">
+      <div class="modal-box">
+        <button class="modal-close" id="legal-close">✕</button>
+        <h2>⚖️ Impressum, Datenschutz & KI-Hinweis</h2>
+        
+        <h3>Angaben gemäß § 5 DDG (ehemals TMG)</h3>
+        <p><strong>Projekt:</strong> Raid Realms (Indie Game Prototyp in Entwicklung)</p>
+        <p><strong>Verantwortlich:</strong> Lenny (<a href="mailto:lifenuggets12@gmail.com" style="color:var(--gold)">lifenuggets12@gmail.com</a>)</p>
+        <p>Dieses Spiel ist ein nicht-kommerzielles Kunst- und Lernprojekt.</p>
+
+        <h3>Datenschutzerklärung (DSGVO)</h3>
+        <p><strong>100% Local-First:</strong> Dieses Spiel speichert keine personenbezogenen Daten auf zentralen Servern. Einstellungen und Spielfortschritt verbleiben ausschließlich lokal im Speicher deines Browsers (LocalStorage). Es werden keine Werbe- oder Tracking-Cookies verwendet.</p>
+
+        <h3>Transparenzhinweis gemäß Art. 50 EU AI Act</h3>
+        <p style="border-left: 3px solid var(--gold); padding-left: 0.8rem; color: var(--txt);">
+          <strong>Kennzeichnung:</strong> Die 102 im Spiel verwendeten Kartengrafiken und Rassenporträts wurden mithilfe generativer Bild-KI-Werkzeuge generiert.
+        </p>
+
+        <h3>Credits & Technologie</h3>
+        <p>Entwickelt mit TypeScript, Vite und Web Audio API. Assistiert von Antigravity AI.</p>
+      </div>
+    </div>
   `;
 
   // Event Listeners
@@ -114,6 +139,13 @@ function renderStartScreen(): void {
   });
   document.getElementById('help-close')?.addEventListener('click', () => {
     document.getElementById('help-modal')?.classList.remove('open');
+  });
+
+  document.getElementById('btn-legal')?.addEventListener('click', () => {
+    document.getElementById('legal-modal')?.classList.add('open');
+  });
+  document.getElementById('legal-close')?.addEventListener('click', () => {
+    document.getElementById('legal-modal')?.classList.remove('open');
   });
 
   document.getElementById('start-btn')?.addEventListener('click', () => {

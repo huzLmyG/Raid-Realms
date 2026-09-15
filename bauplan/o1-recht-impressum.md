@@ -14,11 +14,11 @@ Die Web-App verfügt über ein rechtssicheres Impressum nach § 5 Digitale-Diens
 4. Barrierearmen Link im Startmenü platzieren.
 
 ## Fertig wenn
-- [ ] Impressum und Datenschutzerklärung sind mit 2 Klicks aus dem Hauptmenü erreichbar.
-- [ ] Keine externen unerlaubten Tracker-Skripte im Bundle aktiv.
+- [x] Impressum und Datenschutzerklärung sind mit 2 Klicks aus dem Hauptmenü erreichbar.
+- [x] Keine externen unerlaubten Tracker-Skripte im Bundle aktiv.
 
 ## Ergebnis
-[Wird beim Abarbeiten gefüllt: was konkret entstanden ist]
+Rechtssicheres Impressum nach § 5 DDG (ehemals TMG) sowie vollständige DSGVO-Datenschutzerklärung für die Local-First-Architektur (keine Tracking-Cookies, LocalStorage, keine Drittanbieter-Tracker) direkt als modales Fenster im Startbildschirm (`src/main.ts`) integriert.
 
 ## Notizen
-[Leer lassen. Beim Abarbeiten füllen: Entscheidungen, Abweichungen vom Plan, Datum.]
+Abgeschlossen am 2026-09-15. Keine externen Tracker oder Tracking-Cookies im Codebase vorhanden. Local-First-Prinzip vollständig gewahrt.
