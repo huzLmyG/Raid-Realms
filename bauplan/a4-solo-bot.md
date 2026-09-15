@@ -10,18 +10,22 @@ Ein vollständiges Solo-Duell (Spieler gegen heuristische KI) kann vom Startscre
 ## Arbeitsschritte
 1. Startbildschirm implementieren: Modus-Wahl („Solo vs. KI“ & „Lokales Duell 2P“), Rassen-Karussell mit 10 Rassen-Porträts und Beschreibungen.
 2. Bot-Logik (`src/core/bot.ts`) implementieren:
-   - Spielt leistbare Handkarten sinnvoll aus (Einheiten aufs Feld, Buffs auf Diener).
+   - Spielt leistbare Handkarten sinnvoll aus (Ressourcen zuerst, dann Einheiten, dann Zauber).
    - Kauft prioritär stärkere Karten aus dem Markt (Tier 2/3 bevorzugt).
-   - Greift im Kampf prioritär Taunt-Ziele an, ansonsten Bedrohungen oder den Helden direkt.
+   - Greift im Kampf prioritär Taunt-Ziele an, ansonsten günstige Trades oder den Helden direkt.
 3. Spielende-Erkennung (HP ≤ 0) mit stylischem Victory/Defeat-Overlay und Option zum Replay.
 
 ## Fertig wenn
-- [ ] Spieler kann jede der 10 Rassen wählen und ein Match starten.
-- [ ] Die KI führt eigenständige Züge ohne Hänger aus.
-- [ ] Spielende wird korrekt deklariert und ein Neustart funktioniert ohne Seiten-Reload.
+- [x] Spieler kann jede der 10 Rassen wählen und ein Match starten.
+- [x] Die KI führt eigenständige Züge ohne Hänger aus.
+- [x] Spielende wird korrekt deklariert und ein Neustart funktioniert ohne Seiten-Reload.
 
 ## Ergebnis
-[Wird beim Abarbeiten gefüllt: was konkret entstanden ist]
+- Autonomer `BotAgent` in `src/core/bot.ts` implementiert.
+- Automatisierte Testsuite `tests/bot.test.ts` (3 Tests, inklusive vollständiger Bot-vs-Bot Simulation bis zum Spielende).
+- Volle Integration in `GameUI.ts` und Startbildschirm in `main.ts`.
+- Alle 20 Tests im Projekt laufen grün durch.
 
 ## Notizen
-[Leer lassen. Beim Abarbeiten füllen: Entscheidungen, Abweichungen vom Plan, Datum.]
+- Abgeschlossen am 2026-09-15.
+- Teil A (Fundament) ist damit zu 100% abgeschlossen!

@@ -3,8 +3,15 @@
 > Inhaltsverzeichnis des Bauplans. Entstanden nach Phase 4 der `idee-zu-bauplan`-Methodik.  
 > Lebendes Dokument — nach jeder Meilenstein-Retro aktualisieren.
 
-**Du bist hier:** Teil A · Vorbereitung von Paket A4 (Solo-Bot & Lokales Duell)  
+**Du bist hier:** Teil B · Vorbereitung von Paket B1 (Demo-Deployment)  
 **Letzte Aktualisierung:** 2026-09-15
+
+---
+
+## Meilenstein-Retro A (Fundament & Modularisierung abgeschlossen)
+- **Erkenntnis:** Die Portierung von der monolithischen ~2900-Zeilen-HTML in modularisiertes TypeScript mit Vite hat die Wartbarkeit drastisch verbessert. Die Bundle-Größe ist mit ~60 kB JS und 16 kB CSS winzig.
+- **Automatisierung:** 20 automatische Vitest-Tests decken alle Regeln, Rassen-Passive und Bot-Entscheidungen ab.
+- **Konsequenz für Teil B:** Das Spiel ist jetzt sofort bereit für den statischen Web-Export (GitHub Pages / Vercel), um Playtesting mit echten Spielern zu ermöglichen.
 
 ---
 
@@ -17,19 +24,19 @@
 
 ## Teile & Pakete
 
-### Teil A — Fundament & Modularisierung
+### Teil A — Fundament & Modularisierung (100% Abgeschlossen)
 | Paket | Titel & Ziel (1 Satz) | Status | Rollen |
 |---|---|---|---|
 | [A1](a1-setup-build.md) | **Projekt-Setup & Build-Pipeline:** Vite, TypeScript und Asset-Pipeline für 102 Kartenbilder einrichten. | ✅ fertig | 🤖 Claude |
 | [A2](a2-core-engine.md) | **Core Engine & Datenmodelle:** Deterministische State Machine, Kartendatenbank und Regel-Unit-Tests erstellen. | ✅ fertig | 🤖 Claude |
 | [A3](a3-ui-portierung.md) | **UI-Portierung & Spielfeld-Layout:** Hearthstone Split-Screen, Karten- und Marktdarstellung modularisieren. | ✅ fertig | 🤖 Claude |
-| [A4](a4-solo-bot.md) | **Solo-Bot & Lokales Duell:** KI-Anbindung und Rassenwahl für vollständiges Offline-PvE-Spiel im Browser. | ⏳ bereit | 🤖 Claude / 👤 Nutzer |
+| [A4](a4-solo-bot.md) | **Solo-Bot & Lokales Duell:** KI-Anbindung und Rassenwahl für vollständiges Offline-PvE-Spiel im Browser. | ✅ fertig | 🤖 Claude / 👤 Nutzer |
 
 ### Teil B — Proof (Kernhypothese testen vor weiterer Infrastruktur)
 | Paket | Titel & Ziel (1 Satz) | Status | Rollen |
 |---|---|---|---|
-| [B1](b1-demo-deployment.md) | **Demo-Deployment:** Öffentliche Web-Demo auf GitHub Pages oder Vercel bereitstellen. | ⏳ offen | 🤖 Claude / 👤 Nutzer |
-| [B2](b2-playtesting.md) | **Playtesting mit echten Spielern:** Feedback von mindestens 5 Testnutzern zu Spielspaß und Balance sammeln. | ⏳ offen | 👤 Nutzer |
+| [B1](b1-demo-deployment.md) | **Demo-Deployment:** Öffentliche Web-Demo auf GitHub Pages oder Vercel bereitstellen. | ⏳ bereit | 🤖 Claude / 👤 Nutzer |
+| [B2](b2-playtesting.md) | **Playtesting mit echten Spielern:** Feedback von mindestens 5 Testnutzern zu Spielspaß und Balance sammeln. | ⏳ offen | 👤 Nutzer / 🤖 Claude |
 | [B3](b3-go-no-go.md) | **Go/No-Go-Meilenstein & Balancing-Retro:** Auswertung des Feedbacks und formelle Freigabe für Phase C. | ⏳ offen | 👤 Nutzer / 🤖 Claude |
 
 ### Teil C — MVP (Mobile-First PWA & P2P-Multiplayer)

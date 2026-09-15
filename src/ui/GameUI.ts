@@ -1,5 +1,6 @@
 import { GameState, CardInstance, TargetRef } from '../core/types.ts';
 import { GameEngine } from '../core/engine.ts';
+import { BotAgent } from '../core/bot.ts';
 import { renderPlayerBar } from './components/PlayerBar.ts';
 import { renderBoardArea } from './components/BoardZone.ts';
 import { renderMarketZone } from './components/MarketZone.ts';
@@ -245,55 +246,7 @@ export class GameUI {
   private runAITurn(): void {
     if (this.state.over) return;
     const aiIndex = 1;
-    const ai = this.state.players[aiIndex];
-    const me = this.state.players[0];
-
-    // 1. Karten ausspielen, solange leistbar
-    for (const card of [...ai.hand]) {
-      if (GameEngine.canPlayCard(this.state, aiIndex, card.uid)) {
-        let target: TargetRef | undefined;
-        if (card.damage && !card.aoe) {
-          // Priorisiere Taunt
-          const tauntIndex = me.units.findIndex(u => u && u.keywords?.includes('taunt'));
-          if (tauntIndex !== -1) {
-            target = { type: 'unit', ownerIndex: 0, slotIndex: tauntIndex };
-          } else if (me.buildings.some(b => b.fortify)) {
-            target = { type: 'building', ownerIndex: 0, buildingUid: me.buildings[0].uid };
-          } else {
-            target = { type: 'player', ownerIndex: 0 };
-          }
-        }
-        GameEngine.playCard(this.state, aiIndex, card.uid, target);
-      }
-    }
-
-    // 2. Einheiten angreifen lassen
-    ai.units.forEach((u, slotIndex) => {
-      if (u && !u.summoned) {
-        let target: TargetRef = { type: 'player', ownerIndex: 0 };
-        const tauntIndex = me.units.findIndex(x => x && x.keywords?.includes('taunt'));
-        if (tauntIndex !== -1) {
-          target = { type: 'unit', ownerIndex: 0, slotIndex: tauntIndex };
-        } else if (me.buildings.some(b => b.fortify)) {
-          target = { type: 'building', ownerIndex: 0, buildingUid: me.buildings[0].uid };
-        }
-        GameEngine.attackTarget(this.state, aiIndex, slotIndex, target);
-      }
-    });
-
-    // 3. Wenn möglich vom Markt kaufen
-    const affordableMarket = this.state.market
-      .map((c, idx) => ({ c, idx }))
-      .filter(entry => entry.c !== null && entry.c.cost <= ai.gold);
-
-    if (affordableMarket.length > 0) {
-      // Teuerste Karte kaufen
-      affordableMarket.sort((a, b) => (b.c?.cost ?? 0) - (a.c?.cost ?? 0));
-      GameEngine.buyMarketCard(this.state, aiIndex, affordableMarket[0].idx);
-    }
-
-    // 4. Zug beenden
-    GameEngine.endTurn(this.state);
+    BotAgent.playTurn(this.state, aiIndex);
     SoundEngine.turn();
     this.render();
   }
