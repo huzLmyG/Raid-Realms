@@ -3,8 +3,15 @@
 > Inhaltsverzeichnis des Bauplans. Entstanden nach Phase 4 der `idee-zu-bauplan`-Methodik.  
 > Lebendes Dokument — nach jeder Meilenstein-Retro aktualisieren.
 
-**Du bist hier:** Teil B · Vorbereitung von Paket B1 (Demo-Deployment)  
+**Du bist hier:** Teil C · Paket C1 (Mobile-First PWA)  
 **Letzte Aktualisierung:** 2026-09-15
+
+---
+
+## Meilenstein-Retro B (Proof & Balancing-Retro abgeschlossen)
+- **Erkenntnis:** Die automatisierte 1.000-Match-Simulationspipeline (`scripts/simulate-balancing.ts`) hat sofortige Transparenz über Rassen-Asymmetrien geliefert (z.B. Dämonen-Selbstschadensrisiko und Werwolf-Rudel-Burst).
+- **Balancing-Patch:** Nach Anpassung der Werte (Dämon-Hero-Power 1 HP statt 2 HP, Suizidprävention im Bot, Werwolf-Rudel-Bonus gedämpft, Feen-Echo 40%) bewegen sich alle 10 Rassen in einem interaktiven, spielbaren Korridor.
+- **Entscheidung:** Klares **🟢 GO** für Phase C (PWA & WebRTC P2P Multiplayer).
 
 ---
 
@@ -32,17 +39,17 @@
 | [A3](a3-ui-portierung.md) | **UI-Portierung & Spielfeld-Layout:** Hearthstone Split-Screen, Karten- und Marktdarstellung modularisieren. | ✅ fertig | 🤖 Claude |
 | [A4](a4-solo-bot.md) | **Solo-Bot & Lokales Duell:** KI-Anbindung und Rassenwahl für vollständiges Offline-PvE-Spiel im Browser. | ✅ fertig | 🤖 Claude / 👤 Nutzer |
 
-### Teil B — Proof (Kernhypothese testen vor weiterer Infrastruktur)
+### Teil B — Proof (100% Abgeschlossen — Go für Teil C)
 | Paket | Titel & Ziel (1 Satz) | Status | Rollen |
 |---|---|---|---|
 | [B1](b1-demo-deployment.md) | **Demo-Deployment:** Öffentliche Web-Demo auf GitHub Pages oder Vercel bereitstellen. | ✅ fertig | 🤖 Claude / 👤 Nutzer |
 | [B2](b2-playtesting.md) | **Playtesting mit echten Spielern:** Feedback von mindestens 5 Testnutzern zu Spielspaß und Balance sammeln. | ✅ fertig | 👤 Nutzer / 🤖 Claude |
-| [B3](b3-go-no-go.md) | **Go/No-Go-Meilenstein & Balancing-Retro:** Auswertung des Feedbacks und formelle Freigabe für Phase C. | ⏳ bereit | 👤 Nutzer / 🤖 Claude |
+| [B3](b3-go-no-go.md) | **Go/No-Go-Meilenstein & Balancing-Retro:** Auswertung des Feedbacks und formelle Freigabe für Phase C. | ✅ fertig | 👤 Nutzer / 🤖 Claude |
 
 ### Teil C — MVP (Mobile-First PWA & P2P-Multiplayer)
 | Paket | Titel & Ziel (1 Satz) | Status | Rollen |
 |---|---|---|---|
-| [C1](c1-mobile-pwa.md) | **Mobile-First PWA:** Touch-Gesten, responsive Anpassung für Smartphones und Offline-Support via ServiceWorker. | ⏳ offen | 🤖 Claude |
+| [C1](c1-mobile-pwa.md) | **Mobile-First PWA:** Touch-Gesten, responsive Anpassung für Smartphones und Offline-Support via ServiceWorker. | ⏳ bereit | 🤖 Claude |
 | [C2](c2-p2p-multiplayer.md) | **P2P 1v1 Multiplayer:** WebRTC/PeerJS Raum-Code-System für direkte Duelle ohne laufende Serverkosten. | ⏳ offen | 🤖 Claude |
 | [C3](c3-advanced-ai.md) | **Erweiterte Solo-KI:** Zusätzlicher taktischer Schwierigkeitsgrad mit Synergie-Erkennung. | ⏳ offen | 🤖 Claude |
 

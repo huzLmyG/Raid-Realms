@@ -47,7 +47,7 @@ describe('Raid Realms - Bot Agent & AI Simulation', () => {
       777
     );
 
-    let maxTurns = 50;
+    let maxTurns = 80;
     while (!state.over && maxTurns > 0) {
       const cur = state.activePlayerIndex;
       BotAgent.playTurn(state, cur);

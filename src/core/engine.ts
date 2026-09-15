@@ -324,7 +324,7 @@ export class GameEngine {
 
     // Echo-Mechanik (Fee)
     const canEcho = (player.race === 'fairy' && card.echoable) || player._allEcho;
-    const echoChance = player.units.some(u => u?.echoBoost) ? 0.5 : 0.25;
+    const echoChance = player.units.some(u => u?.echoBoost) ? 0.6 : 0.4;
     const isEcho = canEcho && this.random(state) < echoChance;
     const repeatCount = isEcho ? 2 : 1;
 
@@ -406,7 +406,7 @@ export class GameEngine {
       if (card.isSpell && player.race === 'elf') dmg += Math.min(player.spellChain, 6);
       if (player.race === 'orc' && player.hp < 10) dmg += 2;
       if (player.race === 'demon' && player.hp < 8) dmg += 5;
-      if (player.race === 'werewolf') dmg += Math.min(player.units.filter(u => u !== null).length, 4);
+      if (player.race === 'werewolf') dmg += Math.min(Math.floor(player.units.filter(u => u !== null).length / 2), 2);
       if (player._doubleDmg) {
         dmg *= 2;
         player._doubleDmg = false;
@@ -601,9 +601,11 @@ export class GameEngine {
         this.addLog(state, 'summon', 'Feenstaub zur Hand hinzugefügt');
         break;
       case 'demon':
-        this.damagePlayer(player, 2, state);
-        this.drawCard(player);
-        this.addLog(state, 'action', '2 HP geopfert -> 1 Karte gezogen');
+        if (player.hp > 1) {
+          this.damagePlayer(player, 1, state);
+          this.drawCard(player);
+          this.addLog(state, 'action', '1 HP geopfert -> 1 Karte gezogen');
+        }
         break;
       case 'werewolf':
         for (const u of player.units) {

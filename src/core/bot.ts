@@ -11,7 +11,9 @@ export class BotAgent {
     const opponentIndex = 1 - botIndex;
 
     // 1. Hero Power nutzen, falls nützlich und bezahlbar
-    if (bot.gold >= 2 && !bot.heroPowerUsed) {
+    // Suizidprävention für Dämon: opfere kein Leben, wenn HP <= 15
+    const demonSafe = bot.race !== 'demon' || bot.hp > 15;
+    if (bot.gold >= 2 && !bot.heroPowerUsed && demonSafe) {
       GameEngine.useHeroPower(state, botIndex);
     }
 
@@ -26,6 +28,9 @@ export class BotAgent {
       if (state.over) break;
       if (!bot.hand.some(c => c.uid === card.uid)) continue;
       if (!GameEngine.canPlayCard(state, botIndex, card.uid)) continue;
+
+      // Suizidprävention: Karten mit Selbstschaden nicht spielen, wenn HP kritisch
+      if (card.selfDamage && bot.hp <= card.selfDamage + 6) continue;
 
       let target: TargetRef | undefined;
 
@@ -145,6 +150,20 @@ export class BotAgent {
     );
     if (favorableTrade) {
       return { type: 'unit', ownerIndex: opponentIndex, slotIndex: favorableTrade.i };
+    }
+
+    // Gleichwertiger Trade: Gegnerische Bedrohung ausschalten (wenn Gegner >= eigener ATK hat)
+    const threatTrade = enemyUnits.find(
+      x => (x.u?.health ?? 0) <= atk && (x.u?.attack ?? 0) >= atk
+    );
+    if (threatTrade) {
+      return { type: 'unit', ownerIndex: opponentIndex, slotIndex: threatTrade.i };
+    }
+
+    // Wenn Gegner das Spielfeld flutet (>= 3 Einheiten) und Angreifer Schaden anrichten kann
+    if (enemyUnits.length >= 3 && atk >= 2) {
+      const highestAtkEnemy = [...enemyUnits].sort((a, b) => (b.u?.attack ?? 0) - (a.u?.attack ?? 0))[0];
+      return { type: 'unit', ownerIndex: opponentIndex, slotIndex: highestAtkEnemy.i };
     }
 
     // Ansonsten direkt auf den Helden

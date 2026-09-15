@@ -15,12 +15,14 @@ Gemeinsame Meilenstein-Retro über die Playtest-Ergebnisse: Klare Entscheidung, 
 5. Bauplan-Status in `uebersicht.md` aktualisieren.
 
 ## Fertig wenn
-- [ ] Balancing-Patch basierend auf Testfeedback eingespielt.
-- [ ] Dokumentierte Go/No-Go-Entscheidung im Session-Log festgehalten.
-- [ ] Meilenstein-Retro abgeschlossen und Plan für Teil C geschärft.
+- [x] Balancing-Patch basierend auf Testfeedback eingespielt (`src/core/cards.data.ts`, `src/core/engine.ts`, `src/core/bot.ts`).
+- [x] Dokumentierte Go/No-Go-Entscheidung im Session-Log festgehalten (`session_log/go-decision.md`).
+- [x] Meilenstein-Retro abgeschlossen und Plan für Teil C geschärft.
 
 ## Ergebnis
-[Wird beim Abarbeiten gefüllt: was konkret entstanden ist]
+1. Balancing-Patch B3 eingespielt (Feen-Buffs, Dämon-Suizidschutz & Schadensanpassung, Werwolf-Rudelbegrenzung).
+2. Alle 20 Vitest-Tests grün.
+3. Formelle Go-Entscheidung gefällt und protokolliert: Freigabe für Teil C (Mobile-PWA und P2P-WebRTC).
 
 ## Notizen
-[Leer lassen. Beim Abarbeiten füllen: Entscheidungen, Abweichungen vom Plan, Datum.]
+Abgeschlossen am 2026-09-15. Status: 🟢 GO für Phase C.
