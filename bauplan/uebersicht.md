@@ -36,8 +36,8 @@
 | Paket | Titel & Ziel (1 Satz) | Status | Rollen |
 |---|---|---|---|
 | [B1](b1-demo-deployment.md) | **Demo-Deployment:** Öffentliche Web-Demo auf GitHub Pages oder Vercel bereitstellen. | ✅ fertig | 🤖 Claude / 👤 Nutzer |
-| [B2](b2-playtesting.md) | **Playtesting mit echten Spielern:** Feedback von mindestens 5 Testnutzern zu Spielspaß und Balance sammeln. | ⏳ bereit | 👤 Nutzer / 🤖 Claude |
-| [B3](b3-go-no-go.md) | **Go/No-Go-Meilenstein & Balancing-Retro:** Auswertung des Feedbacks und formelle Freigabe für Phase C. | ⏳ offen | 👤 Nutzer / 🤖 Claude |
+| [B2](b2-playtesting.md) | **Playtesting mit echten Spielern:** Feedback von mindestens 5 Testnutzern zu Spielspaß und Balance sammeln. | ✅ fertig | 👤 Nutzer / 🤖 Claude |
+| [B3](b3-go-no-go.md) | **Go/No-Go-Meilenstein & Balancing-Retro:** Auswertung des Feedbacks und formelle Freigabe für Phase C. | ⏳ bereit | 👤 Nutzer / 🤖 Claude |
 
 ### Teil C — MVP (Mobile-First PWA & P2P-Multiplayer)
 | Paket | Titel & Ziel (1 Satz) | Status | Rollen |
