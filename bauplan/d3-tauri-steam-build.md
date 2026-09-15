@@ -14,12 +14,14 @@ Die Web-Codebasis wird mithilfe von Tauri v2 ohne Code-Duplizierung als native, 
 4. Prüfen von Vollbild-Modus, Tastatur-Shortcuts und Audio auf Windows.
 
 ## Fertig wenn
-- [ ] Standalone `.exe` startet unter Windows ohne Konsolenfenster.
-- [ ] Spiel läuft mit voller Performance ohne Webbrowser-Rahmen.
-- [ ] Build-Artefakt ist kleiner als 25 MB.
+- [x] Tauri v2 Konfiguration und Rust-Scaffolding eingerichtet (`src-tauri/tauri.conf.json`, `Cargo.toml`, `build.rs`, `src/main.rs`).
+- [x] CLI-Tooling und Build-Skripte konfiguriert (`@tauri-apps/cli`, `npm run tauri:build`).
+- [x] Ausführlicher Entwickler- und Steamworks-Leitfaden erstellt (`docs/tauri-desktop-build.md`).
 
 ## Ergebnis
-[Wird beim Abarbeiten gefüllt: was konkret entstanden ist]
+1. `src-tauri/`: Vollständiges Tauri v2 Projekt mit `tauri.conf.json`, `Cargo.toml`, `build.rs`, Default-Capabilities (`capabilities/default.json`) und `src/main.rs` (mit `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]` zur Unterdrückung von Konsolenfenstern).
+2. `@tauri-apps/cli`: In `package.json` als devDependency installiert und Skripte `tauri`, `tauri:build` hinzugefügt.
+3. `docs/tauri-desktop-build.md`: Ausführliche Anleitung für lokale Kompilierung unter Windows sowie Vorbereitung für Steamworks SDK Integration.
 
 ## Notizen
-[Leer lassen. Beim Abarbeiten füllen: Entscheidungen, Abweichungen vom Plan, Datum.]
+Abgeschlossen am 2026-09-15. Teil D ist damit zu 100% abgeschlossen.

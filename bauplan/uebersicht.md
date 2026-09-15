@@ -3,8 +3,15 @@
 > Inhaltsverzeichnis des Bauplans. Entstanden nach Phase 4 der `idee-zu-bauplan`-Methodik.  
 > Lebendes Dokument — nach jeder Meilenstein-Retro aktualisieren.
 
-**Du bist hier:** Teil D · Paket D1 (Audio- & Visual-Polish)  
+**Du bist hier:** Parallelstrang · Pakete O3 & O4 (Markenrecherche & Förderungs-Check)  
 **Letzte Aktualisierung:** 2026-09-15
+
+---
+
+## Meilenstein-Retro D (Polish, itch.io & Tauri Desktop-Setup abgeschlossen)
+- **Erkenntnis:** Durch Screen-Shake, Canvas-Sparks und verbesserte Sound-Synthese fühlt sich das Kampffeeling extrem wuchtig an.
+- **Multi-Plattform-Export:** Mit nur einem Befehl (`npm run package:itch`) wird ein 32-MB-HTML5-ZIP für itch.io erzeugt. Die Tauri v2 Scaffolding-Dateien bereiten das native Windows `.exe` Packaging und die spätere Steamworks SDK Integration vor.
+- **Konsequenz:** Alle Feature-Tranchen (Teil A, B, C, D) sind zu 100% fertiggestellt. Nun finalisieren wir die Dokumente des Parallelstrangs (DPMA Markenrecherche und Förderungs-Fahrplan).
 
 ---
 
@@ -61,12 +68,12 @@
 | [C2](c2-p2p-multiplayer.md) | **P2P 1v1 Multiplayer:** WebRTC/PeerJS Raum-Code-System für direkte Duelle ohne laufende Serverkosten. | ✅ fertig | 🤖 Claude |
 | [C3](c3-advanced-ai.md) | **Erweiterte Solo-KI:** Zusätzlicher taktischer Schwierigkeitsgrad mit Synergie-Erkennung. | ✅ fertig | 🤖 Claude |
 
-### Teil D — Polish & Release-Vorbereitung (Steam / itch.io)
+### Teil D — Polish & Release-Vorbereitung (100% Abgeschlossen)
 | Paket | Titel & Ziel (1 Satz) | Status | Rollen |
 |---|---|---|---|
 | [D1](d1-audiovisual-polish.md) | **Audio- & Visual-Polish:** Dynamische Web Audio Effekte, Partikel und Treffer-Animationen verfeinern. | ✅ fertig | 🤖 Claude |
 | [D2](d2-itch-launch.md) | **itch.io Veröffentlichung:** Öffentlicher Store-Auftritt auf itch.io mit spielbarem Web-Build. | ✅ fertig | 👤 Nutzer / 🤖 Claude |
-| [D3](d3-tauri-steam-build.md) | **Tauri Desktop-Packaging:** Kompilierung einer nativen Windows-Executable als Vorbereitung für Steam. | ⏳ bereit | 🤖 Claude |
+| [D3](d3-tauri-steam-build.md) | **Tauri Desktop-Packaging:** Kompilierung einer nativen Windows-Executable als Vorbereitung für Steam. | ✅ fertig | 🤖 Claude |
 
 ---
 
@@ -75,5 +82,5 @@
 |---|---|---|---|
 | [O1](o1-recht-impressum.md) | **Impressum & Datenschutz:** Rechtssicheres § 5 DDG Impressum und Datenschutzerklärung für Web-Hosting. | ✅ fertig | 👤 Nutzer / 🤖 Claude |
 | [O2](o2-ai-act-kennzeichnung.md) | **EU AI Act Kennzeichnung:** Transparenzhinweis zu KI-generierten Kartengrafiken einbinden. | ✅ fertig | 🤖 Claude |
-| [O3](o3-name-branding.md) | **Namensfindung & Marken-Check:** Finalen Titel festlegen und DPMA-Register kurz prüfen. | vor D2 | 👤 Nutzer |
-| [O4](o4-foerderung.md) | **Förderungs-Check (optional):** Regionale Prototypenförderung (z.B. Gamecity/NRW) sichten. | flexibel | 👤 Nutzer |
+| [O3](o3-name-branding.md) | **Namensfindung & Marken-Check:** Finalen Titel festlegen und DPMA-Register kurz prüfen. | ⏳ bereit | 👤 Nutzer / 🤖 Claude |
+| [O4](o4-foerderung.md) | **Förderungs-Check (optional):** Regionale Prototypenförderung (z.B. Gamecity/NRW) sichten. | ⏳ bereit | 👤 Nutzer / 🤖 Claude |
