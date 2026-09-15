@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAID REALMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg0: #04020a; --bg1: #0d0618; --bg2: #150920; --bg3: #1e0f30;
+  --gold: #f0c040; --blood: #e02040; --arcane: #9b7fff; --green: #30c050;
+  --txt: #f5ead8; --txt2: #c0a878; --muted: #5a4d40; --border: #3d2f50;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Barlow Condensed',sans-serif; background:radial-gradient(ellipse at 50% 0%,#1a0830 0%,#04020a 70%); color:var(--txt); min-height:100vh; }
+.screen { display:none; }
+.screen.active { display:block; }
+
+/* ===== RACE SELECTION ===== */
+#screen-start { padding:2rem; }
+.start-wrap { max-width:1400px; margin:0 auto; text-align:center; }
+.game-title { font-family:'Cinzel',serif; font-size:3.5rem; font-weight:900; background:linear-gradient(135deg,var(--gold),var(--arcane)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; letter-spacing:.4rem; margin-bottom:.4rem; }
+.subtitle { color:var(--txt2); font-size:1.3rem; margin-bottom:1.5rem; }
+.mode-row { display:flex; gap:1.5rem; justify-content:center; margin-bottom:1.5rem; flex-wrap:wrap; }
+.mode-btn { font-family:'Cinzel',serif; font-size:1.2rem; padding:1rem 2.5rem; background:var(--bg2); border:2px solid var(--border); border-radius:10px; color:var(--txt); cursor:pointer; transition:all .25s; }
+.mode-btn:hover,.mode-btn.sel { border-color:var(--gold); box-shadow:0 0 20px rgba(240,192,64,.3); transform:translateY(-3px); }
+.race-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; margin-bottom:1.5rem; }
+@media(max-width:1000px){ .race-grid{grid-template-columns:repeat(3,1fr);} }
+.race-card { background:var(--bg2); border:2px solid var(--border); border-radius:10px; padding:1rem .8rem; cursor:pointer; transition:all .25s; }
+.race-card:hover,.race-card.sel { border-color:var(--gold); box-shadow:0 0 18px rgba(240,192,64,.25); transform:translateY(-3px); }
+.race-icon { font-size:2rem; margin-bottom:.4rem; }
+.race-card h3 { font-family:'Cinzel',serif; font-size:.9rem; color:var(--gold); margin-bottom:.3rem; }
+.race-passive { font-size:.75rem; color:var(--txt2); line-height:1.3; }
+.selection-status { display:none; background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:1rem 2rem; margin-bottom:1rem; gap:3rem; justify-content:center; flex-wrap:wrap; }
+.selection-status.visible { display:flex; }
+.player-sel { text-align:center; }
+.player-sel .label { font-size:.8rem; color:var(--muted); }
+.player-sel .chosen { font-family:'Cinzel',serif; color:var(--gold); font-size:1rem; }
+.start-btn { font-family:'Cinzel',serif; font-size:1.3rem; padding:1rem 4rem; background:linear-gradient(135deg,#7b1a2a,#4a0d15); border:2px solid var(--blood); border-radius:12px; color:var(--txt); cursor:pointer; margin:.5rem; transition:all .25s; }
+.start-btn:hover:not(:disabled) { box-shadow:0 0 30px rgba(224,32,64,.5); transform:translateY(-2px); }
+.start-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+.help-btn { font-family:'Cinzel',serif; font-size:1rem; padding:.7rem 2rem; background:var(--bg2); border:2px solid var(--arcane); border-radius:10px; color:var(--arcane); cursor:pointer; margin:.5rem; transition:all .25s; }
+.help-btn:hover { box-shadow:0 0 15px rgba(155,127,255,.4); }
+
+/* ===== MODAL ===== */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:9999; justify-content:center; align-items:center; }
+.modal-overlay.open { display:flex; }
+.modal-box { background:var(--bg2); border:2px solid var(--gold); border-radius:14px; padding:2rem; max-width:700px; width:90%; max-height:80vh; overflow-y:auto; position:relative; }
+.modal-box h2 { font-family:'Cinzel',serif; color:var(--gold); font-size:1.5rem; margin-bottom:1rem; }
+.modal-box h3 { font-family:'Cinzel',serif; color:var(--arcane); font-size:1rem; margin:1rem 0 .4rem; }
+.modal-box p,.modal-box li { font-size:.9rem; color:var(--txt2); line-height:1.6; margin-bottom:.4rem; }
+.modal-box ul { padding-left:1.2rem; }
+.modal-close { position:absolute; top:.8rem; right:1rem; background:none; border:none; color:var(--muted); font-size:1.5rem; cursor:pointer; }
+.modal-close:hover { color:var(--txt); }
+
+/* ===== GAME SCREEN ===== */
+#screen-game { padding:.5rem; }
+.game-wrap { max-width:1600px; margin:0 auto; }
+
+/* Header */
+.game-header { display:flex; align-items:center; gap:1rem; padding:.5rem .8rem; background:var(--bg1); border:1px solid var(--border); border-radius:10px; margin-bottom:.5rem; flex-wrap:wrap; }
+.turn-info { font-family:'Cinzel',serif; min-width:180px; }
+.turn-num { font-size:1rem; color:var(--gold); }
+.phase-lbl { font-size:.75rem; color:var(--arcane); }
+.player-panels { display:flex; gap:.8rem; flex:1; min-width:0; }
+.pnl { flex:1; background:var(--bg2); border:2px solid var(--border); border-radius:8px; padding:.5rem .8rem; position:relative; transition:border-color .3s,box-shadow .3s; }
+.pnl.active { border-color:var(--gold); box-shadow:0 0 15px rgba(240,192,64,.3); }
+.pnl.can-target { border-color:var(--blood)!important; box-shadow:0 0 25px rgba(224,32,64,.6)!important; cursor:crosshair; animation:tpulse .8s ease-in-out infinite; }
+@keyframes tpulse { 0%,100%{box-shadow:0 0 15px rgba(224,32,64,.4)} 50%{box-shadow:0 0 35px rgba(224,32,64,.9)} }
+.pnl-name { font-family:'Cinzel',serif; font-size:.8rem; color:var(--gold); margin-bottom:.3rem; }
+.pnl-stats { display:flex; gap:1rem; font-size:.85rem; }
+.stat-val { color:var(--txt); font-weight:700; }
+.hp-bar { height:4px; background:rgba(0,0,0,.5); border-radius:2px; margin-top:.3rem; overflow:hidden; }
+.hp-fill { height:100%; background:linear-gradient(90deg,#c41e3a,#ff4060); border-radius:2px; transition:width .4s; }
+.controls { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
+.btn { font-family:'Cinzel',serif; font-size:.8rem; padding:.5rem 1rem; background:rgba(240,192,64,.08); border:1px solid var(--border); border-radius:8px; color:var(--txt2); cursor:pointer; transition:all .2s; }
+.btn:hover { border-color:var(--gold); color:var(--gold); }
+.btn-phase { background:rgba(224,32,64,.15); border-color:var(--blood); color:var(--blood); font-size:.85rem; padding:.6rem 1.2rem; }
+.btn-phase:hover { background:rgba(224,32,64,.3); box-shadow:0 0 15px rgba(224,32,64,.4); }
+.btn-upgrade { border-color:var(--gold)!important; color:var(--gold)!important; background:rgba(240,192,64,.1)!important; animation:upglow 1.5s ease-in-out infinite; }
+@keyframes upglow { 0%,100%{box-shadow:0 0 5px rgba(240,192,64,.3)} 50%{box-shadow:0 0 20px rgba(240,192,64,.7)} }
+
+/* Timer bar */
+#timer-bar { display:none; }
+
+/* Boards */
+.board-zone { display:grid; grid-template-columns:1fr 3fr; gap:.5rem; margin-bottom:.4rem; }
+.board-label { font-family:'Cinzel',serif; font-size:.7rem; color:var(--muted); margin-bottom:.3rem; writing-mode:horizontal-tb; }
+.board-box { background:var(--bg1); border:1px solid var(--border); border-radius:8px; padding:.4rem; }
+.board-box.enemy { border-color:rgba(224,32,64,.3); }
+.board-slots { display:flex; gap:.4rem; flex-wrap:wrap; min-height:40px; }
+.board-title { font-family:'Cinzel',serif; font-size:.7rem; color:var(--muted); margin-bottom:.3rem; }
+
+/* Market */
+.market-zone { background:rgba(240,192,64,.04); border:1px solid rgba(240,192,64,.2); border-radius:10px; padding:.5rem; margin-bottom:.4rem; }
+.market-zone .zone-title { font-family:'Cinzel',serif; font-size:.85rem; color:var(--gold); margin-bottom:.4rem; }
+.cards-row { display:flex; gap:.5rem; flex-wrap:wrap; }
+
+/* Hand */
+.hand-zone { background:var(--bg1); border:1px solid var(--border); border-radius:8px; padding:.5rem; margin-bottom:.4rem; }
+.zone-title { font-family:'Cinzel',serif; font-size:.85rem; color:var(--txt2); margin-bottom:.4rem; }
+
+/* Fog of war */
+.fog-zone { border:1px solid rgba(224,32,64,.2); border-radius:8px; padding:.4rem; margin-bottom:.4rem; }
+.fog-zone .zone-title { color:var(--blood); font-size:.8rem; }
+.card-back { width:90px; height:120px; background:var(--bg2); border:2px solid var(--border); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; opacity:.5; flex-shrink:0; }
+
+/* Log */
+.log-zone { background:var(--bg1); border:1px solid var(--border); border-radius:8px; padding:.5rem; max-height:140px; overflow-y:auto; }
+.log-entry { font-size:.78rem; padding:.15rem .4rem; border-left:2px solid transparent; margin-bottom:.1rem; }
+.log-entry.damage { border-color:var(--blood); }
+.log-entry.gold { border-color:var(--gold); }
+.log-entry.heal { border-color:var(--green); }
+.log-entry.summon { border-color:var(--arcane); }
+.log-entry.death { border-color:#808080; }
+
+/* ===== CARDS ===== */
+.card { width:90px; min-width:90px; background:var(--bg2); border:1.5px solid var(--border); border-radius:8px; overflow:visible; cursor:pointer; transition:transform .2s,box-shadow .2s; position:relative; flex-shrink:0; }
+.card:hover { transform:translateY(-4px); box-shadow:0 6px 20px rgba(0,0,0,.6); z-index:50; }
+.card.spell { border-color:#3a2a60; }
+.card.unit { border-color:#3a1a1a; }
+.card.building { border-color:#2a2a1a; }
+.card.resource { border-color:#1a3a1a; }
+.card.can-target { border-color:var(--blood)!important; box-shadow:0 0 15px rgba(224,32,64,.7)!important; animation:tpulse .8s ease-in-out infinite; cursor:crosshair; }
+.card.selected { border-color:var(--gold)!important; box-shadow:0 0 15px rgba(240,192,64,.8)!important; }
+.card.summoned { opacity:.6; cursor:not-allowed; }
+.card-art { height:60px; overflow:hidden; border-radius:6px 6px 0 0; position:relative; }
+.card-art svg { width:100%; height:100%; display:block; image-rendering:pixelated; }
+.card-body { padding:.25rem .35rem; }
+.card-name { font-family:'Cinzel',serif; font-size:.6rem; color:var(--txt); line-height:1.2; margin-bottom:.1rem; }
+.card-type { font-size:.55rem; color:var(--muted); text-transform:uppercase; margin-bottom:.15rem; }
+.card-effect { font-size:.62rem; color:var(--txt2); line-height:1.2; }
+.card-stats { display:flex; gap:.3rem; font-size:.65rem; margin-top:.1rem; }
+.atk { color:#ff7070; }
+.hp { color:#70ff90; }
+.kw { font-size:.5rem; background:rgba(155,127,255,.15); border:1px solid rgba(155,127,255,.3); color:var(--arcane); border-radius:3px; padding:0 .2rem; }
+.fortify-badge { font-size:.5rem; background:rgba(100,150,255,.15); border:1px solid rgba(100,150,255,.3); color:#80aaff; border-radius:3px; padding:0 .2rem; }
+.card-upgrade-btn { display:none; position:absolute; bottom:.2rem; right:.2rem; background:rgba(240,192,64,.9); border:none; border-radius:4px; color:#000; font-size:.55rem; font-family:'Cinzel',serif; font-weight:700; padding:.15rem .3rem; cursor:pointer; z-index:20; white-space:nowrap; }
+.card-upgrade-btn:hover { background:var(--gold); }
+.card.can-upgrade .card-upgrade-btn { display:block; }
+.card-cost { position:absolute; top:.2rem; right:.2rem; background:rgba(240,192,64,.9); color:#000; font-family:'Cinzel',serif; font-size:.6rem; font-weight:700; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:5; }
+.tier-badge { position:absolute; top:.2rem; left:.2rem; font-size:.55rem; color:var(--gold); z-index:5; }
+.hp-bar-mini { height:3px; background:rgba(0,0,0,.5); border-radius:2px; margin-top:2px; overflow:hidden; }
+.hp-bar-mini-fill { height:100%; background:linear-gradient(90deg,#30c050,#80ff80); transition:width .3s; }
+
+/* Tooltip */
+.card-tooltip { display:none; position:absolute; top:0; left:calc(100% + 8px); bottom:auto; transform:none; width:200px; background:#080312; border:1px solid var(--gold); border-radius:8px; padding:.6rem; z-index:500; pointer-events:none; box-shadow:0 0 20px rgba(0,0,0,.9); }
+.card:hover .card-tooltip { display:block; }
+/* For cards in opponent zone — flip tooltip to left */
+#opp-units .card:hover .card-tooltip, #opp-buildings .card:hover .card-tooltip { left:auto; right:calc(100% + 8px); }
+.tt-desc { font-size:.7rem; color:var(--txt); margin-bottom:.3rem; line-height:1.35; }
+.tt-lore { font-size:.62rem; color:var(--muted); font-style:italic; border-top:1px solid rgba(255,255,255,.06); padding-top:.3rem; line-height:1.3; }
+
+/* Target indicator */
+#target-ind { position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#c41e3a,#8b0000); color:#fff; padding:.7rem 2rem; border-radius:20px; font-family:'Cinzel',serif; font-size:1rem; z-index:9000; display:none; box-shadow:0 4px 20px rgba(196,30,58,.7); border:1px solid rgba(255,100,100,.4); }
+#target-ind.on { display:block; animation:tpulse 1.2s ease-in-out infinite; }
+
+/* Float numbers */
+.float-num { position:fixed; font-family:'Cinzel',serif; font-weight:900; font-size:1.6rem; pointer-events:none; z-index:9999; animation:floatup 1.2s ease-out forwards; }
+.float-num.damage { color:#ff4040; text-shadow:0 0 10px rgba(255,0,0,.8); }
+.float-num.heal { color:#40ff80; text-shadow:0 0 10px rgba(0,255,80,.8); }
+@keyframes floatup { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-60px)} }
+@keyframes screen-flash { 0%{opacity:1} 100%{opacity:0} }
+@keyframes particle-fly { 0%{opacity:1;transform:translate(0,0)scale(1)} 100%{opacity:0;transform:translate(var(--dx),var(--dy))scale(.2)} }
+
+/* Game over */
+#screen-over { display:none; justify-content:center; align-items:center; min-height:100vh; padding:2rem; }
+#screen-over.active { display:flex; }
+.over-box { background:var(--bg2); border:3px solid var(--gold); border-radius:16px; padding:3rem; max-width:640px; width:100%; text-align:center; box-shadow:0 0 50px rgba(240,192,64,.3); }
+.over-title { font-family:'Cinzel',serif; font-size:2.5rem; color:var(--gold); margin-bottom:.5rem; }
+.over-msg { color:var(--txt2); font-size:1.1rem; margin-bottom:1.5rem; }
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin-bottom:2rem; text-align:left; }
+.stat-box { background:rgba(0,0,0,.4); border:1px solid var(--border); border-radius:8px; padding:.7rem; }
+.stat-box .lbl { font-family:'Cinzel',serif; font-size:.75rem; color:var(--gold); margin-bottom:.4rem; }
+.stat-box .vals { font-size:.9rem; color:var(--txt); }
+.restart-btn { font-family:'Cinzel',serif; font-size:1.2rem; padding:1rem 3rem; background:linear-gradient(135deg,#7b1a2a,#4a0d15); border:2px solid var(--blood); border-radius:10px; color:var(--txt); cursor:pointer; transition:all .25s; }
+.restart-btn:hover { box-shadow:0 0 25px rgba(224,32,64,.5); transform:translateY(-2px); }
+</style>
+</head>
+<body>
+
+<!-- TIMER BAR -->
+<div id="timer-bar"></div>
+
+<!-- ===== START SCREEN ===== -->
+<div id="screen-start" class="screen active">
+<div class="start-wrap">
+  <h1 class="game-title">RAID REALMS</h1>
+  <p class="subtitle">Deckbuilder Duell — Ultimate Edition</p>
+
+  <div class="mode-row">
+    <button class="mode-btn" data-mode="pvp">⚔️ PvP (2 Spieler)</button>
+    <button class="mode-btn" data-mode="ai">🤖 vs KI</button>
+    <button class="help-btn" id="help-btn">📖 Spielregeln</button>
+  </div>
+
+  <div class="race-grid" id="race-grid">
+    <div class="race-card" data-race="human"><div class="race-icon">👑</div><h3>MENSCH</h3><p class="race-passive">+1 Gold/Runde bei ≥5 Gold</p></div>
+    <div class="race-card" data-race="orc"><div class="race-icon">⚔️</div><h3>ORK</h3><p class="race-passive">+2 Schaden bei &lt;10 HP</p></div>
+    <div class="race-card" data-race="elf"><div class="race-icon">✨</div><h3>ELF</h3><p class="race-passive">Zauber-Ketten: +2/+4/+6 Bonus</p></div>
+    <div class="race-card" data-race="undead"><div class="race-icon">💀</div><h3>UNTOTER</h3><p class="race-passive">Tote Einheiten: 50% Skelett-Revival</p></div>
+    <div class="race-card" data-race="dragon"><div class="race-icon">🐲</div><h3>DRACHE</h3><p class="race-passive">Gold verfällt nicht, akkumuliert</p></div>
+    <div class="race-card" data-race="dwarf"><div class="race-icon">⛏️</div><h3>ZWERG</h3><p class="race-passive">1x/Runde: Karte in Hand upgraden</p></div>
+    <div class="race-card" data-race="fairy"><div class="race-icon">🧚</div><h3>FEE</h3><p class="race-passive">25% Echo: Karte 2× spielen</p></div>
+    <div class="race-card" data-race="demon"><div class="race-icon">😈</div><h3>DÄMON</h3><p class="race-passive">5 HP opfern = +8 Gold; &lt;8 HP: +5 Schaden</p></div>
+    <div class="race-card" data-race="werewolf"><div class="race-icon">🐺</div><h3>WERWOLF</h3><p class="race-passive">+1 Schaden pro eigene Einheit (max +4)</p></div>
+    <div class="race-card" data-race="vampire"><div class="race-icon">🦇</div><h3>VAMPIR</h3><p class="race-passive">Jeder Schaden heilt 1 HP; Start: 18 HP</p></div>
+  </div>
+
+  <div class="selection-status" id="sel-status">
+    <div class="player-sel" id="sel-p1"><div class="label">Spieler 1</div><div class="chosen">— wähle Rasse —</div></div>
+    <div class="player-sel" id="sel-p2"><div class="label">Spieler 2 / KI</div><div class="chosen">— wähle Rasse —</div></div>
+  </div>
+
+  <div class="mode-row">
+    <button class="start-btn" id="start-btn" disabled>SPIEL STARTEN</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== HELP MODAL ===== -->
+<div class="modal-overlay" id="help-modal">
+<div class="modal-box">
+  <button class="modal-close" id="help-close">✕</button>
+  <h2>📖 Spielregeln — RAID REALMS</h2>
+  <h3>🎯 Ziel</h3>
+  <p>Bringe den Gegner auf 0 HP. Jeder startet mit 20 HP (Vampir: 18 HP).</p>
+  <h3>🔄 Rundenablauf (3 Phasen)</h3>
+  <ul>
+    <li><strong>1. Haupt-Phase:</strong> Spiele Karten aus deiner Hand. Zauber/Ressourcen sofort. Einheiten & Gebäude kommen auf dein Feld.</li>
+    <li><strong>2. Kauf-Phase:</strong> Kaufe Karten aus dem Markt (Mitte) mit deinem Gold.</li>
+    <li><strong>3. Kampf-Phase:</strong> Klicke deine Einheiten → wähle ein Ziel. Angriff auf Einheit, Gebäude oder direkt auf den Gegner.</li>
+  </ul>
+  <h3>🏰 Gebäude & FORTIFY</h3>
+  <p>Gebäude mit <strong>🛡 FORTIFY</strong> (Holzmauer, Barrikade, Steinmauer, Festung) blockieren Direktangriffe auf dich — sie müssen zuerst zerstört werden. Gebäude ohne FORTIFY können direkt ignoriert werden.</p>
+  <h3>⚔️ TAUNT</h3>
+  <p>Einheiten mit TAUNT müssen zuerst angegriffen werden, bevor du andere Ziele angreifen kannst.</p>
+  <h3>⚡ Keywords</h3>
+  <ul>
+    <li><strong>Charge:</strong> Kann sofort in der Runde angreifen (kein Summoning Sickness)</li>
+    <li><strong>Lifesteal:</strong> Schaden heilt den Angreifer</li>
+    <li><strong>FORTIFY:</strong> Gebäude blockiert Direktangriffe</li>
+  </ul>
+  <h3>🎴 Kartentypen</h3>
+  <ul>
+    <li><strong>Zauber (lila):</strong> Schaden, Effekte — direkt anwenden</li>
+    <li><strong>Einheit (rot):</strong> Kämpfer auf deinem Feld</li>
+    <li><strong>Gebäude (gelb):</strong> Passive Effekte jede Runde</li>
+    <li><strong>Ressource (grün):</strong> Gold, Heilung, Karten ziehen</li>
+  </ul>
+  <h3>💡 Rassen-Tipps</h3>
+  <ul>
+    <li>🐲 Drache: Gold aus Vorrundn akkumulieren — explosive Spätrunden</li>
+    <li>⛏️ Zwerg: Upgraden stärkt Karten dauerhaft (+1 Schaden/Stats)</li>
+    <li>✨ Elf: Mehrere Zauber hintereinander = Kettenbonus</li>
+    <li>💀 Untoter: Baue große Armee — Tote kehren als Skelette zurück</li>
+    <li>🦇 Vampir: Aggressiv spielen — jeder Angriff heilt dich</li>
+  </ul>
+</div>
+</div>
+
+<!-- ===== GAME SCREEN ===== -->
+<div id="screen-game" class="screen">
+<div class="game-wrap">
+
+  <!-- Header -->
+  <div class="game-header">
+    <div class="turn-info">
+      <div class="turn-num" id="turn-display">Runde 1</div>
+      <div class="phase-lbl" id="phase-display">Haupt-Phase</div>
+    </div>
+    <div class="player-panels">
+      <div class="pnl" id="pnl0">
+        <div class="pnl-name" id="pnl0-name">Spieler 1</div>
+        <div class="pnl-stats">
+          <span>❤️ <span class="stat-val" id="pnl0-hp">20</span></span>
+          <span>🪙 <span class="stat-val" id="pnl0-gold">0</span></span>
+          <span>🃏 <span class="stat-val" id="pnl0-deck">10</span></span>
+        </div>
+        <div class="hp-bar"><div class="hp-fill" id="pnl0-hpbar" style="width:100%"></div></div>
+      </div>
+      <div class="pnl" id="pnl1">
+        <div class="pnl-name" id="pnl1-name">Spieler 2</div>
+        <div class="pnl-stats">
+          <span>❤️ <span class="stat-val" id="pnl1-hp">20</span></span>
+          <span>🪙 <span class="stat-val" id="pnl1-gold">0</span></span>
+          <span>🃏 <span class="stat-val" id="pnl1-deck">10</span></span>
+        </div>
+        <div class="hp-bar"><div class="hp-fill" id="pnl1-hpbar" style="width:100%"></div></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="btn btn-phase" id="btn-endphase">Phase ➜</button>
+      <button class="btn" id="btn-reroll">Reroll (2🪙)</button>
+      <button class="btn btn-upgrade" id="btn-upgrade" style="display:none">⚒️ Upgrade</button>
+    </div>
+  </div>
+
+  <!-- FOG: opponent hand -->
+  <div class="fog-zone">
+    <div class="zone-title">👁 Gegner Hand: <span id="opp-hand-count">0</span> Karten</div>
+    <div class="cards-row" id="opp-hand"></div>
+  </div>
+
+  <!-- OPPONENT BOARDS -->
+  <div style="display:grid;grid-template-columns:3fr 1fr;gap:.4rem;margin-bottom:.4rem;">
+    <div class="board-box enemy">
+      <div class="board-title" style="color:var(--blood)">⚔️ Gegner Einheiten</div>
+      <div class="board-slots" id="opp-units"></div>
+    </div>
+    <div class="board-box enemy">
+      <div class="board-title" style="color:var(--blood)">🏰 Gegner Gebäude</div>
+      <div class="board-slots" id="opp-buildings"></div>
+    </div>
+  </div>
+
+  <!-- MARKET -->
+  <div class="market-zone">
+    <div class="zone-title">🏪 Markt <span style="font-size:.7rem;color:var(--muted)">(Kauf-Phase)</span></div>
+    <div class="cards-row" id="market-cards"></div>
+  </div>
+
+  <!-- MY BOARDS -->
+  <div style="display:grid;grid-template-columns:3fr 1fr;gap:.4rem;margin-bottom:.4rem;">
+    <div class="board-box">
+      <div class="board-title">🗡️ Deine Einheiten</div>
+      <div class="board-slots" id="my-units"></div>
+    </div>
+    <div class="board-box">
+      <div class="board-title">🏠 Deine Gebäude</div>
+      <div class="board-slots" id="my-buildings"></div>
+    </div>
+  </div>
+
+  <!-- MY HAND -->
+  <div class="hand-zone">
+    <div class="zone-title">🤚 Deine Hand</div>
+    <div class="cards-row" id="my-hand"></div>
+  </div>
+
+  <!-- LOG -->
+  <div class="log-zone" id="game-log"></div>
+
+</div>
+</div>
+
+<!-- ===== GAME OVER ===== -->
+<div id="screen-over" class="screen">
+<div class="over-box">
+  <div class="over-title" id="over-title">SIEG!</div>
+  <div class="over-msg" id="over-msg"></div>
+  <div class="stats-grid" id="over-stats"></div>
+  <button class="restart-btn" onclick="location.reload()">🔄 Nochmal spielen</button>
+</div>
+</div>
+
+<!-- TARGET INDICATOR -->
+<div id="target-ind">⚔️ Wähle ein Ziel!</div>
+
+<script>
+// ============================================================
+// AUDIO ENGINE
+// ============================================================
+let _actx = null;
+function actx() { if(!_actx) _actx=new(window.AudioContext||window.webkitAudioContext)(); return _actx; }
+function tone(f,t,d,v=0.15,decay=0.8) {
+  try {
+    const c=actx(), o=c.createOscillator(), g=c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type=t; o.frequency.setValueAtTime(f,c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(f*decay,c.currentTime+d);
+    g.gain.setValueAtTime(v,c.currentTime); g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);
+    o.start(); o.stop(c.currentTime+d);
+  } catch(e){}
+}
+function noise(d,v=0.08) {
+  try {
+    const c=actx(), buf=c.createBuffer(1,c.sampleRate*d,c.sampleRate);
+    const data=buf.getChannelData(0); for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1);
+    const s=c.createBufferSource(), g=c.createGain();
+    s.buffer=buf; s.connect(g); g.connect(c.destination);
+    g.gain.setValueAtTime(v,c.currentTime); g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);
+    s.start(); s.stop(c.currentTime+d);
+  } catch(e){}
+}
+const SFX = {
+  play:    ()=>{ tone(440,'sine',.12); tone(660,'sine',.08,.06); },
+  damage:  ()=>{ noise(.15,.1); tone(120,'sawtooth',.2,.1,.3); },
+  heal:    ()=>{ tone(523,'sine',.1); tone(784,'sine',.2,.08); },
+  gold:    ()=>{ tone(880,'sine',.08,.08); tone(1100,'sine',.12,.06); },
+  death:   ()=>{ tone(200,'sawtooth',.3,.15,.2); noise(.2,.06); },
+  summon:  ()=>{ tone(300,'square',.05); tone(600,'square',.15,.1); },
+  buy:     ()=>{ tone(660,'sine',.1); tone(880,'sine',.15,.1); },
+  turn:    ()=>{ tone(440,'sine',.05); tone(660,'sine',.1,.15); },
+  upgrade: ()=>{ [400,500,650,800].forEach((f,i)=>setTimeout(()=>tone(f,'square',.08,.1),i*60)); },
+  tick:    ()=>tone(880,'square',.05,.05),
+  victory: ()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,'sine',.3,.2),i*120)); },
+  defeat:  ()=>{ [400,350,300,220].forEach((f,i)=>setTimeout(()=>tone(f,'sawtooth',.3,.15,.4),i*150)); },
+};
+
+// ============================================================
+// PIXEL ART SPRITES (16×16, scale 5px)
+// ============================================================
+const PX=5;
+const SPR = {
+  sword:[
+    '0000000000000000','000000000000ssss','00000000000ss000','0000000000ss0000',
+    '000000000ss00000','00000000ss000000','0000000ss0000000','000000ss00000000',
+    '00000ss000000000','0000ss0000000000','000ss00000000000','00ss000bbbb00000',
+    '0ss000b000b00000','ss0000bbbbb00000','0000000000000000','0000000000000000'],
+  fireball:[
+    '0000000000000000','0000000rr0000000','000000roor000000','00000rooooor0000',
+    '0000roooooooor00','000roooooyyyyor0','00rooooyyyyyroor','00roooyyyyyyyyor',
+    '00roooyyyyyyyoor','000roooyyyyyroo0','0000rooooooooo00','00000roooooor000',
+    '000000rooooor000','0000000rrrr00000','0000000000000000','0000000000000000'],
+  shield:[
+    '0000000000000000','000bbbbbbbbb0000','00bssssssssb0000','00bswwwwwwsb0000',
+    '00bswwwwwwsb0000','00bswwggwwsb0000','00bswwggwwsb0000','000bsswggwssb000',
+    '0000bsssssb00000','00000bssssb00000','000000bssb000000','0000000bb0000000',
+    '0000000000000000','0000000000000000','0000000000000000','0000000000000000'],
+  skull:[
+    '0000000000000000','00000bbbbb000000','0000bwwwwwb00000','000bwwwwwwwb0000',
+    '000bwbbwbbwb0000','000bwbbwbbwb0000','000bwwwwwwwb0000','000bwwwwwwwb0000',
+    '0000bbwbwbb00000','000bwbbwbwwwb000','000bwbbbbbwwb000','0000bwwwwwwb0000',
+    '00000bbbbbbb0000','0000000000000000','0000000000000000','0000000000000000'],
+  coin:[
+    '0000000000000000','000000gggg000000','00000gddddg00000','0000gddddddg0000',
+    '0000gddggddg0000','0000gdgg0ddg0000','0000gddggddg0000','0000gdddddddg000',
+    '0000gdddddddg000','0000gddddddg0000','00000gddddg00000','000000gggg000000',
+    '0000000000000000','0000000000000000','0000000000000000','0000000000000000'],
+  castle:[
+    '0ww000ww000ww000','0ww000ww000ww000','0wwwwwwwwwwwwwww','0ww000ww000ww000',
+    '0wwwwwwwwwwwwwww','0wwwwwwwwwwwwwww','0wwwwwwwwwwwwwww','0wwwwdddddddwwww',
+    '0wwwwdddddddwwww','0wwwwdddddddwwww','0wwwwdddddddwwww','0wwwwdddddddwwww',
+    '0wwwwdddddddwwww','0wwwwwwwwwwwwwww','0000000000000000','0000000000000000'],
+  lightning:[
+    '0000000pppp00000','000000ppppp00000','00000ppppp000000','00000pppp0000000',
+    '0000pppp00000000','000pppppppp00000','00pppppppppp0000','0pppppppppppp000',
+    '000000pppppp0000','00000ppppp000000','00000pppp0000000','0000pppp00000000',
+    '0000ppp000000000','000ppp0000000000','00pp00000000000 ','0000000000000000'],
+  bow:[
+    '0000000000000000','000000000bbb0000','000000bbb000b000','00000b00000bb000',
+    '0000b00000000b00','rrrrr00000000b00','rrrrr00000000b00','0000b00000000b00',
+    '00000b00000bb000','000000bbb000b000','000000000bbb0000','0000000000000000',
+    '0000000000000000','0000000000000000','0000000000000000','0000000000000000'],
+  potion:[
+    '0000000000000000','000000vvvv000000','000000v00v000000','000000vvvv000000',
+    '00000hvvvvh00000','0000hhhvvhhh0000','000hh000vv00hh00','00hh0000vv000hh0',
+    '0hh00000vv0000hh','0h00000pvv00000h','0hh0000ppv0000hh','00hh000ppp000hh0',
+    '000hhhhhhhhhh000','0000hhhhhhhh0000','0000000000000000','0000000000000000'],
+  tower:[
+    '0000000000000000','000tttt0tttt0000','000t00t0t00t0000','000tttttttttt000',
+    '0000tttttttt0000','0000tttttttt0000','0000tt0tt0tt0000','0000tttttttt0000',
+    '0000tttttttt0000','0000tttttttt0000','0000tttttttt0000','0000tttttttt0000',
+    '000ttttttttttt00','000ttttttttttt00','0000000000000000','0000000000000000'],
+  meteor:[
+    '0000000000000000','0000000000mmm000','000000000mRRRm00','00000000mRRRRm00',
+    '0000000mRRRRRm00','000000mRRRRRRm00','00000mRRRRRRm000','0000mRRRRRRm0000',
+    '000mRRRRRRm00000','00mRRRRRRm000000','00mRRRRm00000000','000mmmmm00000000',
+    '000000oo00000000','0000000oo0000000','000000000o000000','0000000000000000'],
+  scroll:[
+    '0000000000000000','00000eeeeeee0000','0000ewwwwwwwe000','0000ewwwwwwwe000',
+    '0000ewwwwwwwe000','0000ewwgggwwe000','0000ewwgggwwe000','0000ewwwwwwwe000',
+    '0000ewwgggwwe000','0000ewwwwwwwe000','0000ewwwwwwwe000','00000eeeeeee0000',
+    '0000000000000000','0000000000000000','0000000000000000','0000000000000000'],
+  wolf:[
+    '0000000000000000','00ww000000000000','0wwww00000wwwww0','0wwwwwwwwwwwwww0',
+    '00wwwwwwwwwwwww0','00ww0wwwwww00ww0','00wwbwwwwwwb0ww0','00wwwwwwwwwwwww0',
+    '000wwwwwwwwwwwww','000wwwwwwwwwwww0','0000wwww0wwwww00','000wwwww00wwwww0',
+    '0000000000000000','0000000000000000','0000000000000000','0000000000000000'],
+  bat:[
+    '0000000000000000','00v000000000v000','0vvv0000000vvv00','vvvvvv0000vvvvvv',
+    'vvvvvvvvvvvvvvv0','0vvvvvvvvvvvvvv0','00vvvvvvvvvvvv00','000vvvvvvvvvvv00',
+    '0000vvVVVVvvv000','000000VrrVv00000','0000000VVv000000','0000000000000000',
+    '0000000000000000','0000000000000000','0000000000000000','0000000000000000'],
+  gate:[
+    '0rrrrrrrrrrrrrr0','rr00000000000rr0','r0000000000000r0','r0000rrrrrr000r0',
+    'r000rr00000r000r','r000r0000000r00r','r000r0000000r00r','r000rr00000r000r',
+    'r0000rrrrrrr000r','r0000000000000r0','rr00000000000rr0','0rrrrrrrrrrrrrr0',
+    '0000000000000000','0000000000000000','0000000000000000','0000000000000000'],
+  angel:[
+    '0000000ww0000000','000000wwww000000','00000wwwwww00000','wwwwwwwwwwwwwwww',
+    'wwwwwwwwwwwwwwww','0wwwwwwwwwwwwww0','000wwwwwwwwwww00','0000000ww0000000',
+    '0000000ww0000000','000000wwww000000','00000wwwwww00000','0000wwwwwwww0000',
+    '0000000000000000','0000000000000000','0000000000000000','0000000000000000'],
+  hammer:[
+    '0000000000000000','00000bbbbbbb0000','0000bsssssssb000','0000bsssssssb000',
+    '00000bbbbbbb0000','000000000b000000','000000000b000000','000000000b000000',
+    '000000000b000000','000000000b000000','000000000b000000','000000000b000000',
+    '000000000b000000','0000000000000000','0000000000000000','0000000000000000'],
+  gem:[
+    '0000000000000000','000000pppp000000','0000pppppppp0000','000pp0pppppp0000',
+    '0000pppppppp0000','0000pppppppp0000','00000pppppp00000','000000pppp000000',
+    '0000000pp0000000','0000000000000000','0000000000000000','0000000000000000',
+    '0000000000000000','0000000000000000','0000000000000000','0000000000000000'],
+  dagger:[
+    '0000000000000000','00000000000000ss','0000000000000ss0','000000000000ss00',
+    '00000000000ss000','0000000000ss0000','000000000ss00000','00000000ss000000',
+    '0000000ss0000000','000000ss00000000','000000s000000000','000000s000000000',
+    '0000000s00000000','0000000000000000','0000000000000000','0000000000000000'],
+  necro:[
+    '0000000000000000','00000bbbbb000000','0000bpppppb00000','000bpppppppb0000',
+    '000bppbbbbpb0000','000bppppppppb000','0000bppppppb0000','000000bppb000000',
+    '000000bppb000000','0000bppppppb0000','000bppppppppb000','0000bbbppbbb0000',
+    '000000bppb000000','0000000bb0000000','0000000000000000','0000000000000000'],
+  smoke:[
+    '0000000000000000','000000sss0000000','00000sssss000000','0000sssssss00000',
+    '000ssssssssss000','00ssssssssssss00','0ssssssssssssss0','0ssssssssssssss0',
+    '00sssssssssssss0','000ssssssssssss0','0000sssssssssss0','00000sssssssss00',
+    '000000sssssss000','0000000000000000','0000000000000000','0000000000000000'],
+  dragon:[
+    '00000000000rr000','0000000000rRRr00','000000r000rRRRr0','0rr000rr00rRRr00',
+    '0rRr0rRrr0rRr000','0rRRrrRRRrrRr000','rRRRRRRRRRRRRr00','0rRRRRRRRRRRRr00',
+    '00rRRRRRRRRRr000','000rRRRRRRRr0000','000rRRRRrRRr0000','00rRRr000rRRr000',
+    '00rRr0000rRRr000','00rr00000rRRr000','000000000rrr0000','0000000000000000'],
+  ruins:[
+    '0000000000000000','0ww0000000ww0000','0ww0000000ww0000','0wwwww00wwwww000',
+    '0wwwww00wwwww000','0ww0ww00ww0ww000','0ww0wwwwww0ww000','0wwwwwwwwwwwwwww',
+    '0wwwwwwwwwwwwwww','0wwwwwwwwwwwwwww','0wwwwdddddwwwwww','0wwwwdddddwwwwww',
+    '0wwwwdddddwwwwww','0wwwwwwwwwwwwwww','0000000000000000','0000000000000000'],
+};
+
+const COLORS = {
+  s:'#9ab0c8',r:'#d04030',R:'#ff7050',o:'#ff8800',y:'#ffee60',
+  w:'#a89880',b:'#6070a0',d:'#6a4428',g:'#f0c040',p:'#b090ff',
+  n:'#38b830',t:'#807090',v:'#7030a0',V:'#c050f0',h:'#30c870',
+  m:'#e07818',e:'#c8a060',W:'#f0eae0','0':null,
+};
+
+function renderSpr(name,bg){
+  const rows=SPR[name]; if(!rows) return '';
+  const sz=PX*16;
+  let rects='';
+  for(let y=0;y<rows.length;y++){
+    const row=rows[y];
+    for(let x=0;x<row.length;x++){
+      const c=COLORS[row[x]];
+      if(c) rects+=`<rect x="${x*PX}" y="${y*PX}" width="${PX}" height="${PX}" fill="${c}"/>`;
+    }
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="image-rendering:pixelated"><rect width="${sz}" height="${sz}" fill="${bg}"/>${rects}</svg>`;
+}
+
+const SPRITE_MAP = {
+  weak_strike:'sword',slash:'sword',blood_rage:'sword',stone_strike:'sword',
+  execute:'sword',death_blow:'sword',soul_sever:'dagger',knife_throw:'dagger',
+  assassin:'dagger',
+  arcane_bolt:'lightning',chain_lightning:'lightning',shockwave:'lightning',
+  dark_bolt:'lightning',time_warp:'lightning',fairy_bolt:'gem',
+  fireball:'fireball',flame_storm:'fireball',hellfire:'fireball',apocalypse:'fireball',
+  meteor:'meteor',
+  skull_summon:'skull',soul_steal:'skull',graveyard:'skull',necromancer:'necro',
+  summon_skeleton:'skull',
+  coin:'coin',mana_crystal:'gem',gold_scale:'coin',blood_coin:'coin',
+  coin_pouch:'coin',treasure_hoard:'coin',dragon_hoard:'coin',plunder:'coin',
+  gold_mine:'coin',vault:'castle',treasure_chest:'coin',
+  emergency_heal:'potion',herb_potion:'potion',major_heal:'potion',elixir:'potion',
+  alchemy_lab:'potion',healer:'potion',
+  meditation:'scroll',wisdom_scroll:'scroll',knowledge_book:'scroll',
+  fairy_dust:'scroll',smoke_bomb:'smoke',war_horn:'scroll',
+  timestop:'scroll',divine_blessing:'scroll',whetstone:'hammer',black_hole:'gem',
+  militia:'shield',knight:'shield',titan:'shield',shield_bearer:'shield',
+  guard_dog:'wolf',peasant:'sword',war_machine:'tower',berserker:'sword',
+  archer:'bow',arrow_salvo:'bow',
+  dragon:'dragon',dragon_claw:'dragon',dragon_nest:'dragon',
+  bite:'wolf',howl:'wolf',den:'wolf',
+  vampire_bite:'bat',crypt:'ruins',
+  demon_lord:'bat',demon_gate:'gate',
+  angel:'angel',forge:'hammer',hammer_throw:'hammer',ore_chunk:'hammer',
+  wooden_wall:'castle',marketplace:'castle',barricade:'castle',
+  stone_wall:'castle',fortress:'castle',barracks:'castle',
+  recruit_tent:'castle',temple:'castle',cathedral:'castle',
+  watch_tower:'tower',catapult:'tower',mage_tower:'tower',
+  fairy_ring:'tower',blood_altar:'skull',soul_harvest:'skull',
+  poison_spit:'potion',acid_rain:'potion',
+};
+const SPR_BG = {spell:'#0e0520',unit:'#140508',building:'#100e04',resource:'#050f05'};
+function cardSVG(card){
+  const s=SPRITE_MAP[card.id]||(card.type==='spell'?'lightning':card.type==='unit'?'shield':card.type==='building'?'castle':'coin');
+  return renderSpr(s,SPR_BG[card.type]||'#0a0612');
+}
+
+// ============================================================
+// CARD DATABASE
+// ============================================================
+const DB = {
+  // Starter
+  weak_strike:{id:'weak_strike',name:'Schwacher Schlag',type:'spell',tier:0,cost:0,damage:2,desc:'2 Schaden.',lore:'Der erste unbeholfene Hieb. Jeder Krieger beginnt hier.'},
+  coin:{id:'coin',name:'Münze',type:'resource',tier:0,cost:0,gold:1,desc:'+1 Gold.',lore:'Abgegriffen und verbogen – aber im Markt zählt jeder Pfennig.'},
+  wooden_wall:{id:'wooden_wall',name:'Holzmauer',type:'building',tier:0,cost:0,health:5,fortify:true,desc:'5 HP. 🛡 FORTIFY: Blockiert Direktangriffe.',lore:'Hastig aus Palissaden errichtet.'},
+  marketplace:{id:'marketplace',name:'Marktplatz',type:'building',tier:0,cost:0,health:6,goldPerTurn:2,desc:'+2 Gold/Runde.',lore:'Händler aus allen Reichen treffen sich hier.'},
+  slash:{id:'slash',name:'Hieb',type:'spell',tier:0,cost:0,damage:3,desc:'3 Schaden.',lore:'Ein breiter Schlag. Die Orken nennen es "Gruß".'},
+  plunder:{id:'plunder',name:'Plünderung',type:'spell',tier:0,cost:0,damage:2,gold:1,desc:'2 Schaden + 1 Gold.',lore:'Warum kämpfen, wenn man auch gleich einstecken kann?'},
+  blood_rage:{id:'blood_rage',name:'Kampfrausch',type:'spell',tier:0,cost:0,damage:7,selfDamage:2,desc:'7 Schaden, -2 HP Selbstschaden.',lore:'Der Schmerz macht ihn schneller.'},
+  arcane_bolt:{id:'arcane_bolt',name:'Arkaner Pfeil',type:'spell',tier:0,cost:0,damage:2,isSpell:true,desc:'2 Schaden (Zauber, triggert Elf-Kette).',lore:'Der erste Zauber elfischer Schüler.'},
+  mana_crystal:{id:'mana_crystal',name:'Mana-Kristall',type:'resource',tier:0,cost:0,gold:2,draw:1,desc:'+2 Gold + 1 Karte.',lore:'Kondensierte Magie in physischer Form.'},
+  meditation:{id:'meditation',name:'Meditation',type:'spell',tier:0,cost:0,draw:3,isSpell:true,desc:'Ziehe 3 Karten (Zauber).',lore:'Drei Atemzüge – der Geist öffnet sich.'},
+  dark_bolt:{id:'dark_bolt',name:'Dunkler Pfeil',type:'spell',tier:0,cost:0,damage:2,desc:'2 Schaden.',lore:'Aus Nekromantenhand: pure Todesergie.'},
+  summon_skeleton:{id:'summon_skeleton',name:'Skelett-Ruf',type:'spell',tier:0,cost:0,summon:['Skelett',1,1],desc:'Beschwört ein Skelett (1/1).',lore:'Ein Flüstern an die Toten.'},
+  soul_steal:{id:'soul_steal',name:'Seelen-Dieb',type:'spell',tier:0,cost:0,damage:4,desc:'4 Schaden.',lore:'Nicht der Körper stirbt zuerst – sondern der Wille.'},
+  graveyard:{id:'graveyard',name:'Friedhof',type:'building',tier:0,cost:0,health:6,summonPerTurn:['Skelett',1,1],desc:'Beschwört jede Runde 1 Skelett (1/1).',lore:'Hier schlafen die Gefallenen nur.'},
+  dragon_claw:{id:'dragon_claw',name:'Drachenklaue',type:'spell',tier:0,cost:0,damage:3,desc:'3 Schaden.',lore:'Abgebrochen in einem alten Kampf – immer noch scharf wie der Tod.'},
+  gold_scale:{id:'gold_scale',name:'Goldschuppe',type:'resource',tier:0,cost:0,gold:2,desc:'+2 Gold.',lore:'Vom Leib des Drachen gefallen.'},
+  dragon_nest:{id:'dragon_nest',name:'Drachennest',type:'building',tier:0,cost:0,health:8,goldPerTurn:2,desc:'+2 Gold/Runde.',lore:'Wo ein Drache schläft, häuft sich Gold.'},
+  hammer_throw:{id:'hammer_throw',name:'Hammerwurf',type:'spell',tier:0,cost:0,damage:2,upgradeable:true,desc:'2 Schaden. Upgradebereit.',lore:'Der Zwerg wirft. Selten verfehlt er.'},
+  ore_chunk:{id:'ore_chunk',name:'Erz',type:'resource',tier:0,cost:0,gold:1,upgradeable:true,desc:'+1 Gold. Upgradebereit.',lore:'Rohes Eisenerz, kaum bearbeitet.'},
+  forge:{id:'forge',name:'Schmiede',type:'building',tier:0,cost:0,health:8,upgradePerTurn:true,desc:'Upgraded 1 Karte in deiner Hand pro Runde.',lore:'Das Feuer glüht Tag und Nacht.'},
+  fairy_bolt:{id:'fairy_bolt',name:'Feenpfeil',type:'spell',tier:0,cost:0,damage:3,echoable:true,desc:'3 Schaden. 25% Echo-Chance (Fee).',lore:'Blitzschnell – manchmal trifft er zweimal.'},
+  fairy_dust:{id:'fairy_dust',name:'Feenstaub',type:'resource',tier:0,cost:0,gold:2,draw:1,echoable:true,desc:'+2 Gold + 1 Karte. 25% Echo (Fee).',lore:'Glitzernd und unberechenbar.'},
+  fairy_ring:{id:'fairy_ring',name:'Feenkreis',type:'building',tier:0,cost:0,health:5,goldPerTurn:1,desc:'+1 Gold/Runde.',lore:'Ein Pilzring im Mondlicht.'},
+  hellfire:{id:'hellfire',name:'Höllenfeuer',type:'spell',tier:0,cost:0,damage:5,selfDamage:2,desc:'5 Schaden, -2 HP Selbstschaden.',lore:'Aus dem Abgrund beschworen.'},
+  soul_harvest:{id:'soul_harvest',name:'Seelenernte',type:'resource',tier:0,cost:0,selfDamage:3,gold:5,desc:'-3 HP, +5 Gold.',lore:'Der Dämonenpakt: Blut gegen Gold.'},
+  blood_altar:{id:'blood_altar',name:'Blutaltar',type:'building',tier:0,cost:0,health:6,goldPerTurn:2,selfDamagePerTurn:1,desc:'+2 Gold/Runde, -1 HP/Runde.',lore:'Jede Runde fordert es seinen Tribut.'},
+  bite:{id:'bite',name:'Biss',type:'spell',tier:0,cost:0,damage:3,summon:['Wolf',1,1],desc:'3 Schaden + beschwört Wolf (1/1).',lore:'Zähne zuerst.'},
+  howl:{id:'howl',name:'Heulen',type:'spell',tier:0,cost:0,summon:['Wolf',1,1],summon2:['Wolf',1,1],desc:'Beschwört 2 Wölfe (1/1 je).',lore:'Aus der Dunkelheit antworten viele.'},
+  den:{id:'den',name:'Höhle',type:'building',tier:0,cost:0,health:6,summonPerTurn:['Wolf',2,2],desc:'Beschwört jede Runde 1 Wolf (2/2).',lore:'Das Rudel wächst.'},
+  vampire_bite:{id:'vampire_bite',name:'Vampirbiss',type:'spell',tier:0,cost:0,damage:4,lifesteal:true,desc:'4 Schaden mit Lifesteal.',lore:'Der Biss ist sanft. Fast zärtlich.'},
+  blood_coin:{id:'blood_coin',name:'Blutgeld',type:'resource',tier:0,cost:0,gold:3,desc:'+3 Gold.',lore:'Geprägt aus dem, was vom Opfer übrig bleibt.'},
+  crypt:{id:'crypt',name:'Gruft',type:'building',tier:0,cost:0,health:6,healPerTurn:2,desc:'+2 HP/Runde.',lore:'Jede Runde regeneriert das Grab.'},
+
+  // Tier 1
+  stone_strike:{id:'stone_strike',name:'Steinschlag',type:'spell',tier:1,cost:2,damage:4,desc:'4 Schaden.',lore:'Ein gewichtiger Brocken, mit Absicht.'},
+  arrow_salvo:{id:'arrow_salvo',name:'Pfeilsalve',type:'spell',tier:1,cost:2,damage:2,aoe:true,desc:'2 Schaden an alle feindl. Einheiten.',lore:'Zehn Bogenschützen. Alle trafen.'},
+  knife_throw:{id:'knife_throw',name:'Messerwurf',type:'spell',tier:1,cost:2,damage:3,draw:1,desc:'3 Schaden + 1 Karte.',lore:'Messer geworfen, schon greift die Hand neu.'},
+  poison_spit:{id:'poison_spit',name:'Giftspucke',type:'spell',tier:1,cost:2,damage:2,dot:2,desc:'2 Schaden + 2 Gift-Schaden.',lore:'Langsamer Tod ist auch Tod.'},
+  shockwave:{id:'shockwave',name:'Schockwelle',type:'spell',tier:1,cost:2,damage:1,aoe:true,direct:true,desc:'1 Schaden an alle Einheiten + Gegner direkt.',lore:'Die Erde bebt.'},
+  coin_pouch:{id:'coin_pouch',name:'Münzbeutel',type:'resource',tier:1,cost:2,gold:3,desc:'+3 Gold.',lore:'Schwer am Gürtel, leicht im Herz.'},
+  emergency_heal:{id:'emergency_heal',name:'Notheilung',type:'resource',tier:1,cost:2,heal:3,desc:'+3 HP.',lore:'Ein Heiler wirft den Trank quer über das Schlachtfeld.'},
+  herb_potion:{id:'herb_potion',name:'Kräutertrank',type:'resource',tier:1,cost:2,draw:2,desc:'Ziehe 2 Karten.',lore:'Mondgras, Schlangenwurz – Ergebnis: Klarheit.'},
+  whetstone:{id:'whetstone',name:'Wetzstein',type:'resource',tier:1,cost:2,buffDamage:2,desc:'+2 Schaden auf nächste Karte.',lore:'Dreimal über die Klinge, dann singt das Metall.'},
+  smoke_bomb:{id:'smoke_bomb',name:'Rauchbombe',type:'resource',tier:1,cost:2,preventAttack:true,desc:'Verhindert nächsten Angriff auf dich.',lore:'Im Rauch verschwindet alles.'},
+  militia:{id:'militia',name:'Miliz',type:'unit',tier:1,cost:2,attack:3,health:4,desc:'3/4.',lore:'Bauern mit Speeren – aber viele davon.'},
+  archer:{id:'archer',name:'Bogenschütze',type:'unit',tier:1,cost:2,attack:2,health:2,desc:'2/2.',lore:'Tödlich auf Distanz.'},
+  guard_dog:{id:'guard_dog',name:'Wachhund',type:'unit',tier:1,cost:2,attack:2,health:3,keywords:['taunt'],desc:'2/3 TAUNT.',lore:'Er stellt sich vor seinen Herrn.'},
+  peasant:{id:'peasant',name:'Leibeigener',type:'unit',tier:1,cost:2,attack:1,health:2,goldPerTurn:1,desc:'1/2, +1 Gold/Runde.',lore:'Er pflügt. Er sät. Er gibt seinen Lohn ab.'},
+  shield_bearer:{id:'shield_bearer',name:'Schildträger',type:'unit',tier:1,cost:2,attack:1,health:5,keywords:['taunt'],desc:'1/5 TAUNT.',lore:'Hält alles auf.'},
+  barricade:{id:'barricade',name:'Barrikade',type:'building',tier:1,cost:2,health:6,fortify:true,desc:'6 HP. 🛡 FORTIFY: Blockiert Direktangriffe.',lore:'Tische, Karren – zusammengeschoben.'},
+  watch_tower:{id:'watch_tower',name:'Wachturm',type:'building',tier:1,cost:2,health:4,damagePerTurn:1,desc:'4 HP, 1 Schaden/Runde auf Gegner.',lore:'Oben sitzt ein Bogenschütze. Er schläft nie.'},
+  treasure_chest:{id:'treasure_chest',name:'Schatztruhe',type:'building',tier:1,cost:2,health:3,goldPerTurn:2,desc:'3 HP, +2 Gold/Runde.',lore:'Alle sehen es. Das ist das Problem.'},
+  alchemy_lab:{id:'alchemy_lab',name:'Alchemielabor',type:'building',tier:1,cost:2,health:5,healPerTurn:1,desc:'5 HP, +1 HP/Runde.',lore:'Brodelnde Fläschchen, regelmäßige Explosionen.'},
+  recruit_tent:{id:'recruit_tent',name:'Rekrutierungszelt',type:'building',tier:1,cost:2,health:4,summonPerTurn:['Miliz',3,4],desc:'4 HP, +1 Miliz (3/4)/Runde.',lore:'Wein, Versprechungen, ein Kreuz auf dem Papier.'},
+
+  // Tier 2
+  fireball:{id:'fireball',name:'Feuerball',type:'spell',tier:2,cost:5,damage:8,isSpell:true,desc:'8 Schaden (Zauber).',lore:'Ein Ball aus kondensierter Sonne.'},
+  chain_lightning:{id:'chain_lightning',name:'Kettenblitz',type:'spell',tier:2,cost:5,damage:5,chain:[3,1],desc:'5 Schaden, springt weiter.',lore:'Blitz springt von Rüstung zu Rüstung.'},
+  flame_storm:{id:'flame_storm',name:'Flammensturm',type:'spell',tier:2,cost:5,damage:4,aoe:true,isSpell:true,desc:'4 Schaden an alle Einheiten (Zauber).',lore:'Der Feuermagier dreht sich im Kreis.'},
+  execute:{id:'execute',name:'Exekution',type:'spell',tier:2,cost:5,execute:5,desc:'Tötet sofort Einheiten mit ≤5 HP.',lore:'Kein Kampf. Nur das Ende.'},
+  acid_rain:{id:'acid_rain',name:'Säureregen',type:'spell',tier:2,cost:5,damage:2,aoe:true,dot:2,desc:'2 AOE-Schaden + 2 Gift.',lore:'Die Rüstung beginnt zu dampfen.'},
+  treasure_hoard:{id:'treasure_hoard',name:'Schatzkiste',type:'resource',tier:2,cost:5,gold:6,desc:'+6 Gold.',lore:'Einer Drachenhöhle entrissen.'},
+  major_heal:{id:'major_heal',name:'Großer Heiltrank',type:'resource',tier:2,cost:5,heal:6,desc:'+6 HP.',lore:'Die Schmerzen gehen sofort.'},
+  wisdom_scroll:{id:'wisdom_scroll',name:'Weisheitsrolle',type:'resource',tier:2,cost:5,draw:4,gold:2,desc:'4 Karten + 2 Gold.',lore:'Jahrzehnte elfischer Gelehrsamkeit.'},
+  war_horn:{id:'war_horn',name:'Kampfhorn',type:'resource',tier:2,cost:5,doubleAttacks:true,desc:'Alle Einheiten greifen diese Runde 2× an.',lore:'Ein Ton – jeder vergisst die Müdigkeit.'},
+  timestop:{id:'timestop',name:'Zeitstillstand',type:'resource',tier:2,cost:5,skipOpponentTurn:true,desc:'Gegner überspringt nächste Runde.',lore:'Die Zeit gefriert.'},
+  knight:{id:'knight',name:'Ritter',type:'unit',tier:2,cost:5,attack:5,health:6,keywords:['taunt'],desc:'5/6 TAUNT.',lore:'Fürchtet nichts. Nicht einmal Drachen.'},
+  assassin:{id:'assassin',name:'Assassine',type:'unit',tier:2,cost:5,attack:6,health:3,keywords:['charge'],desc:'6/3 CHARGE – greift sofort an.',lore:'Man sieht sie nie kommen.'},
+  healer:{id:'healer',name:'Heiler',type:'unit',tier:2,cost:5,attack:2,health:4,healPerTurn:1,desc:'2/4, +1 HP/Runde.',lore:'Kämpft mit Bandagen und Gebeten.'},
+  war_machine:{id:'war_machine',name:'Kriegsmaschine',type:'unit',tier:2,cost:5,attack:4,health:8,aoeAttack:2,desc:'4/8, AOE-Nebenschaden 2.',lore:'Ein rollender Turm aus Stahl.'},
+  berserker:{id:'berserker',name:'Berserker',type:'unit',tier:2,cost:5,attack:7,health:4,desc:'7/4. Stärker bei wenig HP.',lore:'Er schläft selten. Kämpft ohne Ende.'},
+  stone_wall:{id:'stone_wall',name:'Steinmauer',type:'building',tier:2,cost:5,health:12,fortify:true,desc:'12 HP. 🛡 FORTIFY: Blockiert Direktangriffe.',lore:'Würde hundert Jahre halten.'},
+  catapult:{id:'catapult',name:'Katapult',type:'building',tier:2,cost:5,health:6,damagePerTurn:4,desc:'6 HP, 4 Schaden/Runde auf Gegner.',lore:'Feuert alles, was fällt.'},
+  gold_mine:{id:'gold_mine',name:'Goldmine',type:'building',tier:2,cost:5,health:8,goldPerTurn:4,desc:'8 HP, +4 Gold/Runde.',lore:'Im Berg schuften Geister.'},
+  temple:{id:'temple',name:'Tempel',type:'building',tier:2,cost:5,health:7,healPerTurn:2,desc:'7 HP, +2 HP/Runde.',lore:'Die Götter hören zu.'},
+  barracks:{id:'barracks',name:'Kaserne',type:'building',tier:2,cost:5,health:9,summonPerTurn:['Ritter',5,6],desc:'9 HP, +1 Ritter (5/6)/Runde.',lore:'Drill bei Tag und Nacht.'},
+
+  // Tier 3
+  meteor:{id:'meteor',name:'Meteor',type:'spell',tier:3,cost:10,damage:15,aoeSecondary:5,isSpell:true,desc:'15 Schaden + 5 AOE (Zauber).',lore:'Aus dem Nichts des Weltraums gerufen.'},
+  apocalypse:{id:'apocalypse',name:'Apokalypse',type:'spell',tier:3,cost:10,damage:8,aoe:true,isSpell:true,desc:'8 Schaden an alle Einheiten (Zauber).',lore:'Das Ende aller Dinge.'},
+  soul_sever:{id:'soul_sever',name:'Seelenschnitt',type:'spell',tier:3,cost:10,damage:12,piercing:true,desc:'12 Schaden, ignoriert alle Effekte.',lore:'Keine Rüstung. Nur die Seele.'},
+  time_warp:{id:'time_warp',name:'Zeitverzerrung',type:'spell',tier:3,cost:10,extraTurn:true,desc:'Du bekommst sofort eine weitere Runde.',lore:'Die Zeit gehört dir allein.'},
+  death_blow:{id:'death_blow',name:'Todesstoß',type:'spell',tier:3,cost:10,executeAny:8,goldBack:5,desc:'Tötet alle Einheiten mit ≤8 HP + 5 Gold.',lore:'Das Wechselgeld des Todes.'},
+  dragon_hoard:{id:'dragon_hoard',name:'Drachenhort',type:'resource',tier:3,cost:10,gold:12,desc:'+12 Gold.',lore:'Jahrzehnte gesammelt, in Sekunden ausgegeben.'},
+  elixir:{id:'elixir',name:'Elixier',type:'resource',tier:3,cost:10,healAll:true,desc:'Heilt vollständig auf Max HP.',lore:'Riecht nach Rosen. Schmeckt nach Ewigkeit.'},
+  knowledge_book:{id:'knowledge_book',name:'Buch des Wissens',type:'resource',tier:3,cost:10,draw:8,desc:'Ziehe 8 Karten.',lore:'Tausend Seiten, tausend Geheimnisse.'},
+  divine_blessing:{id:'divine_blessing',name:'Göttl. Segen',type:'resource',tier:3,cost:10,invulnerable:2,desc:'2 Runden unverwundbar.',lore:'Die Götter schützen selten. Wenn, dann kurz.'},
+  black_hole:{id:'black_hole',name:'Schwarzes Loch',type:'resource',tier:3,cost:10,destroyAllEnemies:true,desc:'Vernichtet alle feindl. Einheiten sofort.',lore:'Materie, Licht, Hoffnung – alles hinein.'},
+  dragon:{id:'dragon',name:'Drache',type:'unit',tier:3,cost:10,attack:10,health:10,desc:'10/10.',lore:'Der letzte seiner Art – oder der erste einer neuen Ära.'},
+  angel:{id:'angel',name:'Engel',type:'unit',tier:3,cost:10,attack:6,health:8,healAllPerTurn:2,desc:'6/8, heilt alle eig. Einheiten +2/Runde.',lore:'Kämpft, weil er muss.'},
+  titan:{id:'titan',name:'Titan',type:'unit',tier:3,cost:10,attack:8,health:15,keywords:['taunt'],desc:'8/15 TAUNT.',lore:'Geschmiedet vor dem ersten Krieg.'},
+  demon_lord:{id:'demon_lord',name:'Dämonenfürst',type:'unit',tier:3,cost:10,attack:12,health:6,desc:'12/6. Jeder Angriff -2 HP.',lore:'Er will mehr zerstören als überleben.'},
+  necromancer:{id:'necromancer',name:'Nekromant',type:'unit',tier:3,cost:10,attack:4,health:5,resurrect:true,desc:'4/5. Beschwört tote Einheiten wieder.',lore:'Er hat den Tod besiegt.'},
+  fortress:{id:'fortress',name:'Festung',type:'building',tier:3,cost:10,health:20,fortify:true,buffUnitsPerTurn:1,desc:'20 HP. 🛡 FORTIFY. Alle Einheiten +1/+1/Runde.',lore:'Erbaut auf einem Berg der keiner war.'},
+  mage_tower:{id:'mage_tower',name:'Magierturm',type:'building',tier:3,cost:10,health:10,damagePerTurn:3,desc:'10 HP, 3 Schaden/Runde auf Gegner.',lore:'Die Bibliothek zaubert.'},
+  vault:{id:'vault',name:'Schatzkammer',type:'building',tier:3,cost:10,health:12,goldPerTurn:6,desc:'12 HP, +6 Gold/Runde.',lore:'Dreifach gesichert.'},
+  cathedral:{id:'cathedral',name:'Kathedrale',type:'building',tier:3,cost:10,health:15,healPerTurn:3,desc:'15 HP, +3 HP/Runde.',lore:'Die Glocken läuten täglich.'},
+  demon_gate:{id:'demon_gate',name:'Dämonenpforte',type:'building',tier:3,cost:10,health:8,summonPerTurn:['Dämon',8,4],desc:'8 HP, +1 Dämon (8/4)/Runde.',lore:'Sie öffnet sich nur nachts.'},
+};
+
+// ============================================================
+// RACE DECKS
+// ============================================================
+const RACES = {
+  human:    {name:'Mensch',icon:'👑',cards:[{id:'weak_strike',n:4},{id:'coin',n:3},{id:'wooden_wall',n:2},{id:'marketplace',n:1}]},
+  orc:      {name:'Ork',icon:'⚔️',cards:[{id:'slash',n:5},{id:'plunder',n:3},{id:'blood_rage',n:2}]},
+  elf:      {name:'Elf',icon:'✨',cards:[{id:'arcane_bolt',n:5},{id:'mana_crystal',n:3},{id:'meditation',n:2}]},
+  undead:   {name:'Untoter',icon:'💀',cards:[{id:'dark_bolt',n:3},{id:'summon_skeleton',n:4},{id:'soul_steal',n:2},{id:'graveyard',n:1}]},
+  dragon:   {name:'Drache',icon:'🐲',cards:[{id:'dragon_claw',n:4},{id:'gold_scale',n:4},{id:'dragon_nest',n:2}]},
+  dwarf:    {name:'Zwerg',icon:'⛏️',cards:[{id:'hammer_throw',n:5},{id:'ore_chunk',n:3},{id:'forge',n:2}]},
+  fairy:    {name:'Fee',icon:'🧚',cards:[{id:'fairy_bolt',n:4},{id:'fairy_dust',n:3},{id:'fairy_ring',n:3}]},
+  demon:    {name:'Dämon',icon:'😈',cards:[{id:'hellfire',n:4},{id:'soul_harvest',n:3},{id:'blood_altar',n:3}]},
+  werewolf: {name:'Werwolf',icon:'🐺',cards:[{id:'bite',n:3},{id:'howl',n:3},{id:'den',n:4}]},
+  vampire:  {name:'Vampir',icon:'🦇',cards:[{id:'vampire_bite',n:4},{id:'blood_coin',n:3},{id:'crypt',n:3}]},
+};
+
+// ============================================================
+// PLAYER CLASS
+// ============================================================
+class Player {
+  constructor(name,race,isAI=false){
+    this.name=name; this.race=race; this.isAI=isAI;
+    this.hp=race==='vampire'?50:60; this.maxHP=this.hp;
+    this.gold=0; this.storedGold=0;
+    this.deck=[]; this.hand=[]; this.discard=[];
+    this.units=Array(7).fill(null);
+    this.buildings=[];
+    this.spellChain=0; this.upgradeUsed=false;
+    this._buildDeck();
+  }
+  _buildDeck(){
+    RACES[this.race].cards.forEach(({id,n})=>{
+      for(let i=0;i<n;i++) this.deck.push({...DB[id],uid:Math.random(),upgrades:0});
+    });
+    this._shuffle();
+  }
+  _shuffle(){ for(let i=this.deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [this.deck[i],this.deck[j]]=[this.deck[j],this.deck[i]]; } }
+  draw(){
+    if(!this.deck.length){ this.deck=[...this.discard]; this.discard=[]; this._shuffle(); }
+    const c=this.deck.pop(); if(c) this.hand.push(c); return c;
+  }
+  takeDamage(n){ this.hp=Math.max(0,this.hp-n); }
+  heal(n){ this.hp=Math.min(this.maxHP,this.hp+n); }
+  deckSize(){ return this.deck.length+this.discard.length; }
+}
+
+// ============================================================
+// GAME STATE
+// ============================================================
+const G = {
+  players:[],cur:0,turn:1,phase:'main',
+  market:[],
+  selectedUnit:null,targetMode:false,damageCard:null,
+  mode:null,selectedRaces:{p1:null,p2:null},pickingFor:1,
+  over:false,upgradeMode:false,
+  timerID:null,timerLeft:30,
+  stats:[
+    {damage:0,healed:0,cardsPlayed:0,gold:0},
+    {damage:0,healed:0,cardsPlayed:0,gold:0}
+  ],
+};
+
+// ============================================================
+// HELPERS
+// ============================================================
+function log(msg,type='action'){
+  const el=document.getElementById('game-log');
+  if(!el) return;
+  const d=document.createElement('div');
+  d.className='log-entry '+type;
+  const icons={damage:'💥',gold:'🪙',heal:'💚',summon:'✨',death:'💀',action:'▸'};
+  d.textContent=(icons[type]||'▸')+' '+msg;
+  el.appendChild(d);
+  el.scrollTop=el.scrollHeight;
+}
+function floatNum(txt,type,x,y){
+  const d=document.createElement('div');
+  d.className='float-num '+type;
+  d.textContent=txt; d.style.left=x+'px'; d.style.top=y+'px';
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),1200);
+}
+function flash(color='rgba(224,32,64,.12)'){
+  const d=document.createElement('div');
+  d.style.cssText=`position:fixed;inset:0;background:${color};pointer-events:none;z-index:9997;animation:screen-flash .35s ease-out forwards`;
+  document.body.appendChild(d); setTimeout(()=>d.remove(),400);
+}
+function burst(){
+  const cx=window.innerWidth/2+(Math.random()-.5)*300;
+  const cy=window.innerHeight/2+(Math.random()-.5)*150;
+  const cols=['#ff4040','#ff8020','#ffcc00','#ffffff','#c080ff'];
+  for(let i=0;i<10;i++){
+    const p=document.createElement('div');
+    const a=(i/10)*Math.PI*2, dist=40+Math.random()*50;
+    const col=cols[i%cols.length];
+    p.style.cssText=`position:fixed;width:5px;height:5px;border-radius:50%;background:${col};pointer-events:none;z-index:9998;left:${cx}px;top:${cy}px;box-shadow:0 0 6px ${col};animation:particle-fly .6s ease-out forwards;--dx:${Math.cos(a)*dist}px;--dy:${Math.sin(a)*dist}px`;
+    document.body.appendChild(p); setTimeout(()=>p.remove(),700);
+  }
+}
+
+// ============================================================
+// TIMER
+// ============================================================
+function startTimer(){ /* Timer deaktiviert – entspanntes Spielen */ }
+function stopTimer(){ clearInterval(G.timerID); }
+
+// ============================================================
+// TURN FLOW
+// ============================================================
+function startTurn(){
+  const p=G.players[G.cur];
+  G.phase='main'; G.upgradeMode=false; G.selectedUnit=null; G.targetMode=false; G.damageCard=null;
+  p.spellChain=0; p.upgradeUsed=false;
+  log(`─── ${p.name} beginnt Runde ${G.turn} ───`);
+  SFX.turn();
+
+  // Building effects
+  p.buildings.forEach(b=>{
+    if(b.goldPerTurn){ p.gold+=b.goldPerTurn; log(`${b.name}: +${b.goldPerTurn} Gold`,'gold'); }
+    if(b.selfDamagePerTurn){ p.takeDamage(b.selfDamagePerTurn); log(`${b.name}: -${b.selfDamagePerTurn} HP`,'damage'); }
+    if(b.healPerTurn){ p.heal(b.healPerTurn); log(`${b.name}: +${b.healPerTurn} HP`,'heal'); }
+    if(b.damagePerTurn){ const opp=G.players[1-G.cur]; opp.takeDamage(b.damagePerTurn); log(`${b.name}: ${opp.name} -${b.damagePerTurn} HP`,'damage'); }
+    if(b.summonPerTurn){ const[nm,atk,hp]=b.summonPerTurn; spawnUnit(p,nm,atk,hp); }
+    if(b.buffUnitsPerTurn){ p.units.forEach(u=>{ if(u){ u.attack++; u.health++; u.maxHealth++; } }); log(`${b.name}: +1/+1 für alle Einheiten`,'summon'); }
+    if(b.upgradePerTurn){
+      const upgradeable=p.hand.filter(c=>c.upgradeable);
+      if(upgradeable.length){ const c=upgradeable[0]; c.upgrades=(c.upgrades||0)+1; log(`${b.name} upgraded ${c.name}`,'summon'); }
+    }
+  });
+
+  // Unit effects
+  p.units.forEach(u=>{
+    if(!u) return;
+    if(u.goldPerTurn){ p.gold+=u.goldPerTurn; log(`${u.name}: +${u.goldPerTurn} Gold`,'gold'); }
+    if(u.healPerTurn){ p.heal(u.healPerTurn); log(`${u.name}: +${u.healPerTurn} HP`,'heal'); }
+    if(u.healAllPerTurn){ p.units.forEach(x=>{ if(x) x.health=Math.min(x.maxHealth,x.health+u.healAllPerTurn); }); log(`${u.name}: +${u.healAllPerTurn} HP für alle Einheiten`,'heal'); }
+  });
+
+  // Race passives
+  if(p.race==='human'&&p.gold>=5){ p.gold++; log('Mensch-Passiv: +1 Gold','gold'); }
+  if(p.race==='dragon'){ p.gold+=p.storedGold; log(`Drache-Passiv: +${p.storedGold} Gold aus Hort`,'gold'); }
+
+  // Draw to 5
+  while(p.hand.length<5) p.draw();
+  checkWin(); updateUI(); startTimer();
+  if(p.isAI) setTimeout(aiTurn,1200);
+}
+
+function endPhase(){
+  if(G.players[G.cur].isAI) return;
+  stopTimer();
+  if(G.phase==='main'){
+    G.phase='combat'; log('─── Kampf-Phase ───');
+  } else if(G.phase==='combat'){
+    endTurn(); return;
+  }
+  G.upgradeMode=false; G.selectedUnit=null; G.targetMode=false; G.damageCard=null;
+  updateUI();
+}
+
+function endTurn(){
+  stopTimer();
+  const p=G.players[G.cur];
+  p.units.forEach(u=>{ if(u) u.summoned=false; });
+  p.discard.push(...p.hand); p.hand=[];
+  if(p.race==='dragon') p.storedGold=p.gold;
+  p.gold=0;
+  G.cur=1-G.cur;
+  if(G.cur===0) G.turn++;
+  checkWin();
+  if(!G.over) startTurn();
+}
+
+// ============================================================
+// CARD PLAYING
+// ============================================================
+function playCard(card){
+  const p=G.players[G.cur];
+  const opp=G.players[1-G.cur];
+  if(G.phase!=='main'){ log('Nur in der Haupt-Phase!'); return; }
+  const idx=p.hand.indexOf(card); if(idx===-1) return;
+  p.hand.splice(idx,1);
+  log(`${p.name} spielt ${card.name}`,'action'); SFX.play();
+  G.stats[G.cur].cardsPlayed++;
+
+  // Elf spell chain
+  if(card.isSpell&&p.race==='elf') p.spellChain+=2;
+
+  // Echo (fairy)
+  const echo=p.race==='fairy'&&card.echoable&&Math.random()<0.25;
+  if(echo) log('✨ ECHO! Karte 2× gespielt','summon');
+  const times=echo?2:1;
+  for(let i=0;i<times;i++) applyCard(card,p,opp);
+
+  if(card.type!=='unit'&&card.type!=='building') p.discard.push(card);
+  checkWin(); updateUI();
+}
+
+function applyCard(card,p,opp){
+  if(card.gold){ const g=card.gold+(card.upgrades||0); p.gold+=g; log(`+${g} Gold`,'gold'); SFX.gold(); G.stats[G.cur].gold+=g; }
+  if(card.draw){ for(let i=0;i<card.draw;i++) p.draw(); }
+  if(card.selfDamage){ p.takeDamage(card.selfDamage); log(`${p.name} -${card.selfDamage} HP (Selbstschaden)`,'damage'); SFX.damage(); }
+  if(card.heal){ p.heal(card.heal); log(`${p.name} +${card.heal} HP`,'heal'); SFX.heal(); G.stats[G.cur].healed+=card.heal; }
+
+  if(card.summon){ const[nm,atk,hp]=card.summon; spawnUnit(p,nm,atk,hp); }
+  if(card.summon2){ const[nm,atk,hp]=card.summon2; spawnUnit(p,nm,atk,hp); }
+
+  if(card.type==='unit'){
+    let a=(card.attack||0)+(card.upgrades||0);
+    let h=(card.health||0)+(card.upgrades||0);
+    const slot=p.units.findIndex(u=>u===null);
+    if(slot===-1){ log('Kein Platz!'); return; }
+    const kw=[...(card.keywords||[])];
+    p.units[slot]={...card,attack:a,health:h,maxHealth:h,summoned:!kw.includes('charge'),uid:Math.random()};
+    SFX.summon(); log(`${p.name} beschwört ${card.name}`,'summon');
+  }
+  if(card.type==='building'){
+    let h=(card.health||0)+(card.upgrades||0)*2;
+    p.buildings.push({...card,health:h,maxHealth:h,uid:Math.random(),upgrades:0});
+    log(`${p.name} baut ${card.name}`,'summon');
+  }
+
+  // Damage cards enter targeting mode
+  if(card.damage){
+    let dmg=card.damage+(card.upgrades||0)*2;
+    if(card.isSpell&&p.race==='elf') dmg+=Math.min(p.spellChain,6);
+    if(p.race==='orc'&&p.hp<10) dmg+=2;
+    if(p.race==='demon'&&p.hp<8) dmg+=5;
+    if(p.race==='werewolf'){ const cnt=p.units.filter(u=>u).length; dmg+=Math.min(cnt,4); }
+    if(card.aoe){
+      if(card.direct){ opp.takeDamage(dmg); log(`${opp.name} nimmt ${dmg} Schaden`,'damage'); G.stats[G.cur].damage+=dmg; SFX.damage(); flash(); }
+      opp.units.forEach(u=>{ if(u) dealDmgToUnit(opp,u,dmg); });
+    } else {
+      G.damageCard={...card,finalDmg:dmg}; G.targetMode=true;
+      document.getElementById('target-ind').className='on';
+      document.getElementById('target-ind').textContent=`⚔️ Wähle Ziel für ${card.name} (${dmg} Schaden)`;
+      updateUI(); return;
+    }
+  }
+
+  if(card.execute){
+    opp.units.forEach(u=>{ if(u&&u.health<=card.execute) killUnit(opp,u); });
+  }
+  if(card.executeAny){
+    opp.units.forEach(u=>{ if(u&&u.health<=card.executeAny) killUnit(opp,u); });
+    if(card.goldBack){ p.gold+=card.goldBack; }
+  }
+  if(card.destroyAllEnemies){
+    [...opp.units].forEach(u=>{ if(u) killUnit(opp,u); });
+  }
+  if(card.healAll){ p.heal(p.maxHP); log(`${p.name} heilt vollständig`,'heal'); SFX.heal(); }
+  if(card.extraTurn){ log('Zeitverzerrung! Nochmal du.','action'); }
+  if(card.skipOpponentTurn){ opp._skipNextTurn=true; log('Zeitstillstand! Gegner überspringt Runde.','action'); }
+  if(card.doubleAttacks){ p.units.forEach(u=>{ if(u) u._doubleAttack=true; }); log('Kampfhorn! Alle Einheiten greifen 2× an.','action'); }
+  if(card.buffDamage){ p._dmgBuff=(p._dmgBuff||0)+card.buffDamage; log(`+${card.buffDamage} Schaden auf nächste Karte`,'action'); }
+  if(card.invulnerable){ p._invulnerable=card.invulnerable; log(`${p.name} ist ${card.invulnerable} Runden unverwundbar`,'action'); }
+}
+
+// ============================================================
+// TARGETING
+// ============================================================
+function resolveTarget(target){
+  const p=G.players[G.cur]; const opp=G.players[1-G.cur];
+  const card=G.damageCard;
+  if(!card){ clearTarget(); return; }
+
+  if(target===opp){
+    opp.takeDamage(card.finalDmg);
+    log(`${opp.name} nimmt ${card.finalDmg} direkten Schaden`,'damage');
+    G.stats[G.cur].damage+=card.finalDmg; SFX.damage(); flash();
+    const pnl=document.getElementById('pnl'+(1-G.cur));
+    if(pnl){ const r=pnl.getBoundingClientRect(); floatNum('-'+card.finalDmg,'damage',r.left+r.width/2,r.top+r.height/2); }
+  } else {
+    dealDmgToUnit(opp,target,card.finalDmg);
+    G.stats[G.cur].damage+=card.finalDmg;
+  }
+
+  if(p.race==='vampire'){ p.heal(1); }
+
+  if(card.aoeSecondary){
+    opp.units.forEach(u=>{ if(u&&u!==target) dealDmgToUnit(opp,u,card.aoeSecondary); });
+  }
+  clearTarget(); checkWin(); updateUI();
+}
+
+function clearTarget(){
+  G.targetMode=false; G.damageCard=null;
+  document.getElementById('target-ind').className='';
+}
+
+function dealDmgToUnit(owner,unit,dmg){
+  if(!unit) return;
+  unit.health-=dmg;
+  log(`${unit.name} nimmt ${dmg} Schaden (${unit.health}/${unit.maxHealth})`,'damage');
+  if(unit.health<=0){ SFX.death(); killUnit(owner,unit); }
+  else SFX.damage();
+}
+
+function killUnit(owner,unit){
+  const ui=owner.units.indexOf(unit);
+  if(ui!==-1){
+    log(`${unit.name} wurde zerstört!`,'death'); burst();
+    if(owner.race==='undead'&&Math.random()<.5){
+      owner.units[ui]={name:'Skelett',type:'unit',attack:1,health:1,maxHealth:1,summoned:false,uid:Math.random()};
+      log('Untoten-Passiv: Skelett zurückgekehrt!','summon');
+    } else owner.units[ui]=null;
+    return;
+  }
+  const bi=owner.buildings.indexOf(unit);
+  if(bi!==-1){ log(`${unit.name} wurde zerstört!`,'death'); burst(); owner.buildings.splice(bi,1); }
+}
+
+function spawnUnit(player,name,attack,health){
+  const slot=player.units.findIndex(u=>u===null);
+  if(slot===-1){ log('Kein Platz!'); return; }
+  player.units[slot]={name,type:'unit',attack,health,maxHealth:health,summoned:true,uid:Math.random()};
+  SFX.summon(); log(`${name} beschworen`,'summon');
+}
+
+// ============================================================
+// COMBAT
+// ============================================================
+function attackUnit(attacker,target){
+  const p=G.players[G.cur]; const opp=G.players[1-G.cur];
+  if(attacker.summoned){ log('Summoning Sickness!'); return; }
+  let dmg=attacker.attack+(p._dmgBuff||0);
+  p._dmgBuff=0;
+  if(p.race==='orc'&&p.hp<10) dmg+=2;
+  if(p.race==='werewolf') dmg+=Math.min(p.units.filter(u=>u).length,4);
+
+  if(target===opp){
+    // Direct attack on player
+    opp.takeDamage(dmg);
+    log(`${attacker.name} → direkter Angriff (${dmg})`,'damage'); SFX.damage(); flash();
+    G.stats[G.cur].damage+=dmg;
+    const pnl=document.getElementById('pnl'+(1-G.cur));
+    if(pnl){ const r=pnl.getBoundingClientRect(); floatNum('-'+dmg,'damage',r.left+r.width/2,r.top+r.height/2); }
+    if(p.race==='vampire') p.heal(1);
+  } else {
+    // Attack unit or building
+    target.health-=dmg;
+    log(`${attacker.name} → ${target.name} (${dmg} Schaden)`,'damage');
+    if(target.type==='unit'&&target.attack){
+      attacker.health-=target.attack;
+      log(`${target.name} schlägt zurück (${target.attack})`,'damage');
+    }
+    SFX.damage();
+    if(target.health<=0){ SFX.death(); killUnit(opp,target); }
+    if(attacker.health<=0){ SFX.death(); killUnit(p,attacker); }
+    if(p.race==='vampire') p.heal(1);
+  }
+
+  if(attacker._doubleAttack){ attacker._doubleAttack=false; }
+  G.selectedUnit=null; G.targetMode=false;
+  document.getElementById('target-ind').className='';
+  checkWin(); updateUI();
+}
+
+// ============================================================
+// TARGETING LOGIC
+// ============================================================
+function canBeTargeted(target){
+  if(!G.targetMode) return false;
+  const opp=G.players[1-G.cur];
+  const isUnit=opp.units.includes(target);
+  const isBuilding=opp.buildings.includes(target);
+  const isPlayer=target===opp;
+
+  if(!isUnit&&!isBuilding&&!isPlayer) return false;
+
+  // Taunt must be attacked first
+  const taunts=opp.units.filter(u=>u&&u.keywords?.includes('taunt'));
+  if(taunts.length>0){
+    if(isPlayer||isBuilding) return false;
+    return taunts.includes(target);
+  }
+
+  // Fortify: can't hit player if fortify building exists
+  if(isPlayer){
+    const fortify=opp.buildings.filter(b=>b.fortify);
+    if(fortify.length>0) return false;
+  }
+
+  return true;
+}
+
+// ============================================================
+// UPGRADE SYSTEM (costs gold, available in main phase)
+// ============================================================
+const UPGRADE_COST_BUILDING = 3;
+const UPGRADE_COST_CARD = 2;
+
+function upgradeBuilding(building){
+  const p=G.players[G.cur];
+  if(G.phase!=='main'){ log('Nur in der Haupt-Phase upgraden!'); return; }
+  if(p.gold<UPGRADE_COST_BUILDING){ log(`Upgrade kostet ${UPGRADE_COST_BUILDING} Gold!`); return; }
+  p.gold-=UPGRADE_COST_BUILDING;
+  building.upgrades=(building.upgrades||0)+1;
+  // Improve the building's main stat
+  if(building.goldPerTurn) building.goldPerTurn+=1;
+  else if(building.healPerTurn) building.healPerTurn+=1;
+  else if(building.damagePerTurn) building.damagePerTurn+=1;
+  else if(building.summonPerTurn){ building.summonPerTurn=[building.summonPerTurn[0],building.summonPerTurn[1]+1,building.summonPerTurn[2]+1]; }
+  building.health+=5; building.maxHealth+=5;
+  SFX.upgrade();
+  log(`⬆️ ${building.name} upgegraded! (Stufe ${building.upgrades})`,'action');
+  updateUI();
+}
+
+function upgradeHandCard(card){
+  const p=G.players[G.cur];
+  if(G.phase!=='main'){ log('Nur in der Haupt-Phase upgraden!'); return; }
+  if(p.gold<UPGRADE_COST_CARD){ log(`Upgrade kostet ${UPGRADE_COST_CARD} Gold!`); return; }
+  p.gold-=UPGRADE_COST_CARD;
+  card.upgrades=(card.upgrades||0)+1;
+  SFX.upgrade();
+  log(`⬆️ ${card.name} in Hand upgegraded! (Stufe ${card.upgrades})`,'action');
+  updateUI();
+}
+
+// ============================================================
+// MARKET
+// ============================================================
+function initMarket(){
+  const pool=Object.values(DB).filter(c=>c.tier>0);
+  G.market=[];
+  for(let i=0;i<6;i++) G.market.push({...pool[Math.floor(Math.random()*pool.length)],uid:Math.random()});
+}
+function buyCard(card){
+  const p=G.players[G.cur];
+  if(G.phase!=='main'&&G.phase!=='market'){ log('Nur in der Haupt- oder Kauf-Phase!'); return; }
+  if(p.gold<card.cost){ log('Nicht genug Gold!'); return; }
+  p.gold-=card.cost; p.discard.push({...card,uid:Math.random(),upgrades:0});
+  const i=G.market.indexOf(card);
+  if(i!==-1){
+    const pool=Object.values(DB).filter(c=>c.tier>0);
+    G.market[i]={...pool[Math.floor(Math.random()*pool.length)],uid:Math.random()};
+  }
+  log(`${p.name} kauft ${card.name} (${card.cost} Gold)`,'gold'); SFX.buy();
+  G.stats[G.cur].gold+=0; updateUI();
+}
+function reroll(){
+  const p=G.players[G.cur];
+  if((G.phase!=='main'&&G.phase!=='market')||p.gold<2){ return; }
+  p.gold-=2; initMarket(); log('Markt neu gerollt (-2 Gold)'); updateUI();
+}
+
+// ============================================================
+// UPGRADE
+// ============================================================
+function startUpgrade(){
+  if(G.players[G.cur].upgradeUsed||G.phase!=='main') return;
+  G.upgradeMode=true; log('⚒️ Wähle eine Karte zum Upgraden!','action'); renderHand();
+}
+function doUpgrade(card){
+  const p=G.players[G.cur];
+  if(!G.upgradeMode) return;
+  card.upgrades=(card.upgrades||0)+1;
+  p.upgradeUsed=true; G.upgradeMode=false;
+  SFX.upgrade(); log(`⚒️ ${card.name} upgegraded (+1)`,'action');
+  updateUI();
+}
+
+// ============================================================
+// WIN CHECK
+// ============================================================
+function checkWin(){
+  if(G.over) return;
+  G.players.forEach((p,i)=>{
+    if(p.hp<=0){
+      G.over=true; stopTimer();
+      const w=G.players[1-i];
+      log(`=== ${w.name} GEWINNT! ===`);
+      (w.isAI?SFX.defeat:SFX.victory)();
+      setTimeout(()=>{
+        document.getElementById('screen-game').classList.remove('active');
+        const over=document.getElementById('screen-over');
+        over.classList.add('active');
+        document.getElementById('over-title').textContent=w.name+' GEWINNT!';
+        document.getElementById('over-msg').textContent=`${p.name} besiegt nach Runde ${G.turn}`;
+        const sg=document.getElementById('over-stats');
+        const mk=(lbl,a,b)=>`<div class="stat-box"><div class="lbl">${lbl}</div><div class="vals">${G.players[0].name}: ${a} | ${G.players[1].name}: ${b}</div></div>`;
+        sg.innerHTML=mk('⚔️ Schaden',G.stats[0].damage,G.stats[1].damage)+mk('💚 Geheilt',G.stats[0].healed,G.stats[1].healed)+mk('🃏 Karten',G.stats[0].cardsPlayed,G.stats[1].cardsPlayed)+mk('🪙 Gold',G.stats[0].gold,G.stats[1].gold);
+      },1200);
+    }
+  });
+}
+
+// ============================================================
+// AI
+// ============================================================
+function aiTurn(){
+  const ai=G.players[G.cur]; const opp=G.players[1-G.cur];
+  if(G.over||!ai.isAI) return;
+  log('KI denkt…');
+
+  if(G.phase==='main'){
+    const cards=[...ai.hand];
+    cards.forEach(card=>{
+      if(G.phase!=='main') return;
+      if(card.damage&&!card.aoe){
+        playCard(card);
+        if(G.targetMode){
+          const taunts=opp.units.filter(u=>u&&u.keywords?.includes('taunt'));
+          const pool=taunts.length?taunts:opp.units.filter(u=>u);
+          const t=pool.length?pool[0]:opp;
+          resolveTarget(t);
+        }
+      } else playCard(card);
+    });
+    // AI buys from market
+    const aff=G.market.filter(c=>c.cost<=ai.gold).sort((a,b)=>b.cost-a.cost);
+    if(aff.length) buyCard(aff[0]);
+    setTimeout(()=>{ G.phase='combat'; updateUI(); setTimeout(aiTurn,800); },1500);
+  } else if(G.phase==='combat'){
+    ai.units.forEach(u=>{
+      if(!u||u.summoned) return;
+      const taunts=opp.units.filter(u=>u&&u.keywords?.includes('taunt'));
+      const t=taunts.length?taunts[0]:(opp.units.find(u=>u)||opp);
+      setTimeout(()=>{ if(!G.over){ G.selectedUnit=u; G.targetMode=true; attackUnit(u,t); } },300);
+    });
+    setTimeout(()=>{ if(!G.over) endTurn(); },2500);
+  }
+}
+
+// ============================================================
+// UI RENDERING
+// ============================================================
+function updateUI(){
+  if(!G.players.length) return;
+  const p=G.players[G.cur];
+  // Header
+  document.getElementById('turn-display').textContent=`Runde ${G.turn} — ${p.name}`;
+  const phases={main:'Haupt-Phase (Karten + Markt)',market:'Kauf-Phase',combat:'Kampf-Phase'};
+  document.getElementById('phase-display').textContent=phases[G.phase]||G.phase;
+  const phaseBtn=document.getElementById('btn-endphase');
+  if(G.phase==='main') phaseBtn.textContent='⚔️ Zur Kampf-Phase';
+  else if(G.phase==='combat') phaseBtn.textContent='✅ Zug beenden';
+  // Panels
+  G.players.forEach((pl,i)=>{
+    document.getElementById(`pnl${i}`).classList.toggle('active',i===G.cur);
+    document.getElementById(`pnl${i}-name`).textContent=`${pl.name} (${RACES[pl.race].icon} ${RACES[pl.race].name})`;
+    document.getElementById(`pnl${i}-hp`).textContent=pl.hp;
+    document.getElementById(`pnl${i}-gold`).textContent=pl.gold;
+    document.getElementById(`pnl${i}-deck`).textContent=pl.deckSize();
+    document.getElementById(`pnl${i}-hpbar`).style.width=(pl.hp/pl.maxHP*100)+'%';
+  });
+  // Opponent panel targeting
+  const oppIdx=1-G.cur;
+  const oppPnl=document.getElementById(`pnl${oppIdx}`);
+  const canHitPlayer=G.targetMode&&canBeTargeted(G.players[oppIdx]);
+  oppPnl.classList.toggle('can-target',canHitPlayer);
+  oppPnl.onclick=canHitPlayer?(()=>resolveTarget(G.players[oppIdx])):null;
+  oppPnl.style.cursor=canHitPlayer?'crosshair':'';
+  // Upgrade button
+  const upBtn=document.getElementById('btn-upgrade');
+  upBtn.style.display=(p.race==='dwarf'&&!p.upgradeUsed&&G.phase==='main'&&!p.isAI)?'inline-block':'none';
+  // Boards and hands
+  renderOppHand(); renderBoards(); renderHand(); renderMarket();
+}
+
+function renderOppHand(){
+  const opp=G.players[1-G.cur];
+  const el=document.getElementById('opp-hand');
+  document.getElementById('opp-hand-count').textContent=opp.hand.length;
+  el.innerHTML='';
+  for(let i=0;i<opp.hand.length;i++){
+    const d=document.createElement('div'); d.className='card-back'; d.textContent='🔮';
+    el.appendChild(d);
+  }
+}
+
+function renderBoards(){
+  const p=G.players[G.cur]; const opp=G.players[1-G.cur];
+
+  // My units
+  const mu=document.getElementById('my-units'); mu.innerHTML='';
+  p.units.forEach(u=>{
+    if(!u) return;
+    const el=makeUnitCard(u);
+    if(G.phase==='combat'&&!u.summoned&&!p.isAI){
+      el.onclick=()=>{ G.selectedUnit=u; G.targetMode=true; document.getElementById('target-ind').className='on'; document.getElementById('target-ind').textContent=`⚔️ ${u.name} bereit! Wähle Ziel.`; updateUI(); };
+    }
+    if(G.selectedUnit===u) el.classList.add('selected');
+    mu.appendChild(el);
+  });
+
+  // My buildings
+  const mb=document.getElementById('my-buildings'); mb.innerHTML='';
+  p.buildings.forEach(b=>mb.appendChild(makeBuildingCard(b,false)));
+
+  // Opp units
+  const ou=document.getElementById('opp-units'); ou.innerHTML='';
+  opp.units.forEach(u=>{
+    if(!u) return;
+    const el=makeUnitCard(u);
+    if(canBeTargeted(u)){
+      el.classList.add('can-target');
+      el.onclick=(e)=>{ e.stopPropagation(); if(G.selectedUnit) attackUnit(G.selectedUnit,u); else resolveTarget(u); };
+    }
+    ou.appendChild(el);
+  });
+
+  // Opp buildings
+  const ob=document.getElementById('opp-buildings'); ob.innerHTML='';
+  opp.buildings.forEach(b=>ob.appendChild(makeBuildingCard(b,true)));
+}
+
+function renderHand(){
+  const p=G.players[G.cur];
+  const el=document.getElementById('my-hand'); el.innerHTML='';
+  const canUpgradeCards=G.phase==='main'&&!p.isAI&&p.gold>=UPGRADE_COST_CARD;
+  p.hand.forEach(card=>{
+    const c=makeCard(card,canUpgradeCards);
+    if(G.upgradeMode){ c.style.outline='2px solid var(--gold)'; c.onclick=()=>doUpgrade(card); }
+    else{ c.onclick=()=>playCard(card); }
+    el.appendChild(c);
+  });
+}
+
+function renderMarket(){
+  const el=document.getElementById('market-cards'); el.innerHTML='';
+  const p=G.players[G.cur];
+  G.market.forEach(card=>{
+    const c=makeCard(card,false);
+    if(G.phase==='main'||G.phase==='market') c.onclick=()=>buyCard(card);
+    el.appendChild(c);
+  });
+}
+
+// ============================================================
+// CARD ELEMENT BUILDERS
+// ============================================================
+function makeCard(card,showUpgrade=false){
+  const el=document.createElement('div');
+  el.className='card '+(card.type||'spell');
+  if(showUpgrade) el.classList.add('can-upgrade');
+  const up=card.upgrades||0;
+  const svg=cardSVG(card);
+  const tier=['','✦','✦✦','✦✦✦'][card.tier||0];
+  const cost=card.cost>0?`<div class="card-cost">${card.cost}</div>`:'';
+  const tierBadge=tier?`<div class="tier-badge">${tier}</div>`:'';
+  const kws=(card.keywords||[]).map(k=>`<span class="kw">${k.toUpperCase()}</span>`).join('');
+  const fortify=card.fortify?`<span class="fortify-badge">🛡 FORTIFY</span>`:'';
+  const stats=(card.attack||card.health)?`<div class="card-stats">${card.attack?`<span class="atk">⚔${card.attack+up}</span>`:''} ${card.health&&card.type==='unit'?`<span class="hp">♥${card.health+up}</span>`:''}</div>`:'';
+  const effect=getEffectText(card);
+  const tooltip=`<div class="card-tooltip">${card.desc?`<div class="tt-desc">${card.desc}</div>`:''}${card.lore?`<div class="tt-lore">"${card.lore}"</div>`:''}</div>`;
+  const upgBtn=showUpgrade?`<button class="card-upgrade-btn">⬆ ${UPGRADE_COST_CARD}💰</button>`:'';
+
+  el.innerHTML=`${cost}${tierBadge}
+    <div class="card-art">${svg}</div>
+    <div class="card-body">
+      <div class="card-name">${card.name}${up>0?` <b style="color:var(--gold)">+${up}</b>`:''}</div>
+      <div class="card-type">${card.type}</div>
+      <div class="card-effect">${effect}</div>
+      ${stats}${kws?`<div style="display:flex;gap:2px;flex-wrap:wrap;margin-top:2px">${kws}</div>`:''}
+    </div>${tooltip}${upgBtn}`;
+
+  if(showUpgrade){
+    const btn=el.querySelector('.card-upgrade-btn');
+    if(btn) btn.addEventListener('click',(e)=>{ e.stopPropagation(); upgradeHandCard(card); });
+  }
+  return el;
+}
+
+function makeUnitCard(unit){
+  const el=document.createElement('div');
+  el.className='card unit'+(unit.summoned?' summoned':'');
+  const svg=cardSVG(unit);
+  const kws=(unit.keywords||[]).map(k=>`<span class="kw">${k.toUpperCase()}</span>`).join('');
+  const hpPct=Math.max(0,(unit.health/unit.maxHealth)*100);
+  el.innerHTML=`<div class="card-art">${svg}</div>
+    <div class="card-body">
+      <div class="card-name">${unit.name}</div>
+      <div class="card-stats"><span class="atk">⚔${unit.attack}</span> <span class="hp">♥${unit.health}/${unit.maxHealth}</span></div>
+      ${kws?`<div style="display:flex;gap:2px;flex-wrap:wrap">${kws}</div>`:''}
+      <div class="hp-bar-mini"><div class="hp-bar-mini-fill" style="width:${hpPct}%"></div></div>
+    </div>`;
+  return el;
+}
+
+function makeBuildingCard(building,isOpp){
+  const el=document.createElement('div');
+  el.className='card building';
+  const svg=cardSVG(building);
+  const hpPct=Math.max(0,(building.health/(building.maxHealth||building.health))*100);
+  const fortify=building.fortify?`<span class="fortify-badge">🛡</span>`:'';
+  const upBadge=building.upgrades?`<span style="color:var(--gold);font-size:.55rem;font-weight:700"> +${building.upgrades}</span>`:'';
+  const tooltip=`<div class="card-tooltip">${building.desc?`<div class="tt-desc">${building.desc}</div>`:''}${building.lore?`<div class="tt-lore">"${building.lore}"</div>`:''}</div>`;
+  const p=G.players[G.cur];
+  const canUpgrade=!isOpp&&G.phase==='main'&&!G.players[G.cur].isAI&&p.gold>=UPGRADE_COST_BUILDING;
+  if(canUpgrade) el.classList.add('can-upgrade');
+
+  el.innerHTML=`<div class="card-art">${svg}</div>
+    <div class="card-body">
+      <div class="card-name">${building.name}${upBadge} ${fortify}</div>
+      <div class="card-stats"><span class="hp">♥${building.health}</span></div>
+      <div class="hp-bar-mini"><div class="hp-bar-mini-fill" style="width:${hpPct}%"></div></div>
+    </div>${tooltip}
+    ${canUpgrade?`<button class="card-upgrade-btn">⬆ ${UPGRADE_COST_BUILDING}💰</button>`:''}`;
+
+  if(canUpgrade){
+    const btn=el.querySelector('.card-upgrade-btn');
+    if(btn) btn.addEventListener('click',(e)=>{ e.stopPropagation(); upgradeBuilding(building); });
+  }
+
+  if(isOpp&&canBeTargeted(building)){
+    el.classList.add('can-target');
+    el.onclick=(e)=>{ e.stopPropagation(); if(G.selectedUnit) attackUnit(G.selectedUnit,building); else resolveTarget(building); };
+  }
+  return el;
+}
+
+function getEffectText(card){
+  const p=[];
+  if(card.damage) p.push(`${card.damage+(card.upgrades||0)*2} Schaden`);
+  if(card.aoe) p.push('AOE');
+  if(card.gold) p.push(`+${card.gold+(card.upgrades||0)} Gold`);
+  if(card.draw) p.push(`+${card.draw} Karte${card.draw>1?'n':''}`);
+  if(card.heal) p.push(`+${card.heal} HP`);
+  if(card.selfDamage) p.push(`-${card.selfDamage} HP`);
+  if(card.goldPerTurn) p.push(`+${card.goldPerTurn} Gold/Rde`);
+  if(card.healPerTurn) p.push(`+${card.healPerTurn} HP/Rde`);
+  if(card.damagePerTurn) p.push(`${card.damagePerTurn} Schn/Rde`);
+  if(card.summonPerTurn) p.push(`Spawnt ${card.summonPerTurn[0]}/Rde`);
+  if(card.lifesteal) p.push('Lifesteal');
+  if(card.fortify) p.push('🛡 FORTIFY');
+  if(card.execute) p.push(`Tötet ≤${card.execute} HP`);
+  if(card.summon) p.push(`+${card.summon[0]}`);
+  return p.join(' · ')||'';
+}
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+document.addEventListener('DOMContentLoaded',()=>{
+  // Mode buttons
+  document.querySelectorAll('.mode-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('sel'));
+      btn.classList.add('sel');
+      G.mode=btn.dataset.mode;
+      G.selectedRaces={p1:null,p2:null}; G.pickingFor=1;
+      document.querySelectorAll('.race-card').forEach(c=>c.classList.remove('sel'));
+      document.getElementById('start-btn').disabled=true;
+      document.getElementById('sel-status').className='selection-status visible';
+      document.getElementById('sel-p1').querySelector('.chosen').textContent='— wähle Rasse —';
+      document.getElementById('sel-p2').querySelector('.chosen').textContent=G.mode==='ai'?'— KI wählt zufällig —':'— wähle Rasse —';
+    });
+  });
+
+  // Race cards
+  document.querySelectorAll('.race-card').forEach(card=>{
+    card.addEventListener('click',()=>{
+      if(!G.mode) return;
+      const race=card.dataset.race;
+      if(G.mode==='pvp'){
+        if(G.pickingFor===1){
+          document.querySelectorAll('.race-card').forEach(c=>c.classList.remove('sel'));
+          card.classList.add('sel');
+          G.selectedRaces.p1=race;
+          document.getElementById('sel-p1').querySelector('.chosen').textContent=RACES[race].icon+' '+RACES[race].name;
+          G.pickingFor=2;
+        } else {
+          if(race===G.selectedRaces.p1) return;
+          document.querySelectorAll('.race-card').forEach(c=>c.classList.remove('sel'));
+          card.classList.add('sel');
+          G.selectedRaces.p2=race;
+          document.getElementById('sel-p2').querySelector('.chosen').textContent=RACES[race].icon+' '+RACES[race].name;
+          document.getElementById('start-btn').disabled=false;
+        }
+      } else {
+        // AI mode
+        document.querySelectorAll('.race-card').forEach(c=>c.classList.remove('sel'));
+        card.classList.add('sel');
+        G.selectedRaces.p1=race;
+        const races=Object.keys(RACES);
+        let aiRace; do{ aiRace=races[Math.floor(Math.random()*races.length)]; }while(aiRace===race);
+        G.selectedRaces.p2=aiRace;
+        document.getElementById('sel-p1').querySelector('.chosen').textContent=RACES[race].icon+' '+RACES[race].name;
+        document.getElementById('sel-p2').querySelector('.chosen').textContent=RACES[aiRace].icon+' '+RACES[aiRace].name+' (KI)';
+        document.getElementById('start-btn').disabled=false;
+      }
+    });
+  });
+
+  // Start button
+  document.getElementById('start-btn').addEventListener('click',startGame);
+
+  // Phase button
+  document.getElementById('btn-endphase').addEventListener('click',endPhase);
+
+  // Reroll
+  document.getElementById('btn-reroll').addEventListener('click',reroll);
+
+  // Upgrade
+  document.getElementById('btn-upgrade').addEventListener('click',startUpgrade);
+
+  // Help modal
+  document.getElementById('help-btn').addEventListener('click',()=>{
+    document.getElementById('help-modal').classList.add('open');
+  });
+  document.getElementById('help-close').addEventListener('click',()=>{
+    document.getElementById('help-modal').classList.remove('open');
+  });
+  document.getElementById('help-modal').addEventListener('click',(e)=>{
+    if(e.target===e.currentTarget) e.currentTarget.classList.remove('open');
+  });
+});
+
+function startGame(){
+  const {p1,p2}=G.selectedRaces;
+  if(!p1||!p2) return;
+  G.players=[new Player('Spieler 1',p1,false),new Player(G.mode==='ai'?'KI':'Spieler 2',p2,G.mode==='ai')];
+  G.cur=Math.floor(Math.random()*2);
+  G.turn=1; G.over=false;
+  G.stats=[{damage:0,healed:0,cardsPlayed:0,gold:0},{damage:0,healed:0,cardsPlayed:0,gold:0}];
+  initMarket();
+  document.getElementById('screen-start').classList.remove('active');
+  document.getElementById('screen-game').classList.add('active');
+  log('=== RAID REALMS STARTET ===');
+  log(`${G.players[0].name} (${RACES[p1].name}) vs ${G.players[1].name} (${RACES[p2].name})`);
+  startTurn();
+}
+</script>
+</body>
+</html>

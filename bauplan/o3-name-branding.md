@@ -1,0 +1,23 @@
+# Paket O3 — Namensfindung & Marken-Check
+
+**Teil:** Parallelstrang (Organisation & Recht)  
+**Voraussetzungen:** Vor Paket D2 (vor kommerziellem Launch / Steam-Setup)  
+**Rollen:** 👤 Nutzer: Namensauswahl treffen · 🤖 Claude: DPMA- & Steam-Kollisionsprüfung unterstützen  
+
+## Ziel
+Der endgültige Spieltitel ist gewählt (entweder Festlegung von „Raid Realms“ oder Alternative) und eine Kollisionsprüfung im Markenregister (DPMA) sowie auf Steam und itch.io zeigt keine unmittelbaren Konflikte.
+
+## Arbeitsschritte
+1. Kurz-Check auf Steam, itch.io und Google nach Spielen mit identischem oder verwechslungsfähigem Namen.
+2. Ähnlichkeitsrecherche im DPMA-Register (Klasse 9 & 41: Computerspiele) durchführen.
+3. Finale Titel-Entscheidung dokumentieren und Branding-Grafiken (Logo, Favicon) anpassen.
+
+## Fertig wenn
+- [ ] Endgültiger Spielname ist im `KONZEPT.md` und `README.md` festgeschrieben.
+- [ ] Keine markenrechtlichen Blockaden auf Steam oder in DE/EU bekannt.
+
+## Ergebnis
+[Wird beim Abarbeiten gefüllt: was konkret entstanden ist]
+
+## Notizen
+[Leer lassen. Beim Abarbeiten füllen: Entscheidungen, Abweichungen vom Plan, Datum.]
