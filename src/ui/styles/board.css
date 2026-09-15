@@ -2,6 +2,7 @@
 #screen-game {
   padding: 0;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -9,8 +10,11 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   background: radial-gradient(ellipse at 50% 40%, #120828 0%, #04020a 80%);
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
 }
 
 /* Player bars */
@@ -18,13 +22,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.8rem;
-  padding: 0.4rem 0.8rem;
+  gap: 0.6rem;
+  padding: 0.2rem 0.8rem;
+  min-height: 38px;
+  max-height: 48px;
   background: linear-gradient(180deg, rgba(13, 6, 24, 0.97), rgba(4, 2, 10, 0.99));
   flex-shrink: 0;
   position: relative;
   z-index: 5;
-  overflow: hidden;
 }
 
 .p-bar.enemy {
@@ -36,13 +41,13 @@
 }
 
 .p-avatar {
-  width: 48px;
-  height: 48px;
+  width: clamp(32px, 4.8vh, 44px);
+  height: clamp(32px, 4.8vh, 44px);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   flex-shrink: 0;
   border: 2px solid var(--border);
   background: var(--bg2);
@@ -57,12 +62,12 @@
 
 .p-bar.enemy .p-avatar {
   border-color: rgba(224, 32, 64, 0.5);
-  box-shadow: 0 0 12px rgba(224, 32, 64, 0.2);
+  box-shadow: 0 0 10px rgba(224, 32, 64, 0.2);
 }
 
 .p-bar.mine .p-avatar {
   border-color: rgba(240, 192, 64, 0.5);
-  box-shadow: 0 0 12px rgba(240, 192, 64, 0.2);
+  box-shadow: 0 0 10px rgba(240, 192, 64, 0.2);
 }
 
 .p-info {
@@ -73,9 +78,9 @@
 
 .p-name {
   font-family: 'Cinzel', serif;
-  font-size: 0.85rem;
+  font-size: clamp(0.68rem, 1.2vh, 0.82rem);
   color: var(--txt2);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.1rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -83,9 +88,9 @@
 
 .p-stats {
   display: flex;
-  gap: 1rem;
-  font-size: 0.85rem;
-  margin-bottom: 0.2rem;
+  gap: 0.8rem;
+  font-size: clamp(0.7rem, 1.3vh, 0.82rem);
+  margin-bottom: 0.1rem;
 }
 
 .p-stats .sv {
@@ -94,18 +99,17 @@
 }
 
 .race-passive-bar {
-  font-size: 0.65rem;
+  font-size: clamp(0.55rem, 1vh, 0.65rem);
   color: var(--arcane);
   opacity: 0.8;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 250px;
-  margin-top: 0.1rem;
 }
 
 .hp-bar {
-  height: 6px;
+  height: clamp(4px, 0.8vh, 6px);
   background: rgba(0, 0, 0, 0.6);
   border-radius: 3px;
   overflow: hidden;
@@ -140,13 +144,13 @@
 
 /* Hero Power Button */
 .hero-power-btn {
-  width: 48px;
-  height: 48px;
+  width: clamp(32px, 4.8vh, 44px);
+  height: clamp(32px, 4.8vh, 44px);
   border-radius: 50%;
   border: 2px solid var(--arcane);
   background: radial-gradient(circle, rgba(155, 127, 255, 0.15), var(--bg2));
   color: var(--arcane);
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   cursor: pointer;
   transition: all 0.25s;
   display: flex;
@@ -176,8 +180,8 @@
   color: #000;
   font-size: 0.55rem;
   font-weight: 700;
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -189,11 +193,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.3rem 0.6rem;
+  gap: 0.4rem;
+  padding: 0.2rem 0.5rem;
   flex: 1 1 0;
-  min-height: 60px;
-  overflow: hidden;
+  min-height: clamp(55px, 14vh, 105px);
+  max-height: 22vh;
+  overflow-x: auto;
+  overflow-y: hidden;
   position: relative;
   z-index: 1;
 }
@@ -208,12 +214,61 @@
 
 .board-section {
   display: flex;
-  gap: 0.4rem;
+  gap: 0.3rem;
   align-items: center;
   justify-content: center;
-  flex: 1;
+  flex-shrink: 0;
   flex-wrap: nowrap;
-  overflow: hidden;
+}
+
+.board-section.units-section {
+  flex: 1;
+  justify-content: center;
+}
+
+.board-section.buildings-section {
+  flex-shrink: 0;
+  justify-content: center;
+}
+
+/* Visual board slots for empty positions */
+.board-slot {
+  height: clamp(52px, 13vh, 92px);
+  width: auto;
+  aspect-ratio: 2/3;
+  border-radius: 6px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.board-slot.empty-slot {
+  border: 1.5px dashed rgba(240, 192, 64, 0.22);
+  background: rgba(10, 5, 22, 0.5);
+  color: rgba(240, 192, 64, 0.45);
+}
+
+.board-slot.empty-slot:hover {
+  border-color: rgba(240, 192, 64, 0.5);
+  background: rgba(25, 12, 40, 0.65);
+}
+
+.board-slot .slot-icon {
+  font-size: clamp(0.7rem, 1.8vh, 1rem);
+  opacity: 0.5;
+  margin-bottom: 2px;
+}
+
+.board-slot .slot-num {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.48rem, 1.1vh, 0.65rem);
+  opacity: 0.7;
+  font-weight: 700;
 }
 
 .board-divider {
@@ -226,13 +281,14 @@
 
 .board-label {
   font-family: 'Cinzel', serif;
-  font-size: 0.55rem;
+  font-size: clamp(0.45rem, 0.9vh, 0.55rem);
   color: var(--muted);
   writing-mode: vertical-lr;
   text-orientation: mixed;
   flex-shrink: 0;
   opacity: 0.6;
 }
+
 
 /* Graveyard & Piles */
 .graveyard-zone {
@@ -318,16 +374,19 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 0.6rem;
-  padding: 0.3rem 1rem 0.2rem;
+  gap: 0.4rem;
+  padding: 0.15rem 0.8rem 0.2rem;
   flex-shrink: 0;
-  min-height: 155px;
+  min-height: clamp(75px, 18vh, 135px);
+  max-height: 24vh;
   perspective: 800px;
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: visible;
   position: relative;
-  z-index: 2;
+  z-index: 15;
   touch-action: pan-x;
 }
+
 
 /* ===== MOBILE & TOUCH OPTIMIZATIONS ===== */
 @media (max-width: 768px) {

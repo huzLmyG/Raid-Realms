@@ -3,46 +3,46 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.2rem;
-  padding: 0.25rem 0.8rem;
+  gap: 0.15rem;
+  padding: 0.2rem 0.6rem;
   background: linear-gradient(180deg, rgba(30, 15, 48, 0.97), rgba(20, 10, 32, 0.98));
   border-top: 2px solid rgba(240, 192, 64, 0.25);
   border-bottom: 2px solid rgba(240, 192, 64, 0.25);
   flex-shrink: 0;
   position: relative;
   z-index: 10;
-  box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.7), 0 6px 16px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.6);
 }
 
 .center-top-row {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
   flex-wrap: nowrap;
   justify-content: center;
 }
 
 .turn-badge {
   font-family: 'Cinzel', serif;
-  font-size: 0.75rem;
+  font-size: clamp(0.65rem, 1.2vh, 0.75rem);
   color: var(--gold);
   background: rgba(240, 192, 64, 0.08);
   border: 1px solid rgba(240, 192, 64, 0.25);
   border-radius: 16px;
-  padding: 0.15rem 0.7rem;
+  padding: 0.1rem 0.6rem;
   white-space: nowrap;
 }
 
 .phase-badge {
-  font-size: 0.65rem;
+  font-size: clamp(0.6rem, 1.1vh, 0.68rem);
   color: var(--arcane);
   white-space: nowrap;
 }
 
 .btn-end {
   font-family: 'Cinzel', serif;
-  font-size: 0.75rem;
-  padding: 0.35rem 1.2rem;
+  font-size: clamp(0.65rem, 1.2vh, 0.75rem);
+  padding: 0.25rem 1rem;
   background: linear-gradient(135deg, rgba(224, 32, 64, 0.25), rgba(224, 32, 64, 0.12));
   border: 1.5px solid var(--blood);
   border-radius: 8px;
@@ -68,7 +68,7 @@
 
 .market-label {
   font-family: 'Cinzel', serif;
-  font-size: 0.75rem;
+  font-size: clamp(0.65rem, 1.2vh, 0.75rem);
   color: var(--gold);
   white-space: nowrap;
   flex-shrink: 0;
@@ -76,53 +76,55 @@
 
 .market-panel {
   display: flex;
-  gap: 0.4rem;
+  gap: 0.35rem;
   align-items: center;
   justify-content: center;
   flex: 1;
   min-width: 0;
-  padding: 0.3rem 0.4rem;
+  padding: 0.2rem 0.4rem;
   background: linear-gradient(135deg, rgba(106, 68, 40, 0.22), rgba(240, 192, 64, 0.1));
   border: 1px solid rgba(240, 192, 64, 0.22);
   border-radius: 8px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   position: relative;
   z-index: 11;
 }
 
 .market-panel .card {
-  width: clamp(70px, 8vw, 98px) !important;
+  height: clamp(50px, 12vh, 85px) !important;
+  width: auto !important;
   aspect-ratio: 2/3;
 }
 
 .market-panel .card .card-name {
-  font-size: 0.6rem;
+  font-size: clamp(0.48rem, 1vh, 0.6rem);
 }
 
 .market-panel .card .card-body {
-  padding: 0.15rem 0.25rem;
+  padding: 0.1rem 0.2rem;
 }
 
 .market-panel .card .card-stats {
-  font-size: 0.6rem;
+  font-size: clamp(0.5rem, 1vh, 0.6rem);
 }
 
 .market-panel .card .card-cost {
-  width: 18px;
-  height: 18px;
-  font-size: 0.6rem;
+  width: clamp(15px, 2.2vh, 18px);
+  height: clamp(15px, 2.2vh, 18px);
+  font-size: clamp(0.5rem, 1vh, 0.62rem);
 }
 
 .market-panel .card.market-empty {
-  border: 2px dashed rgba(240, 192, 64, 0.15);
+  border: 1.5px dashed rgba(240, 192, 64, 0.15);
   background: rgba(10, 5, 20, 0.6);
   cursor: default;
 }
 
 .btn-sm {
   font-family: 'Cinzel', serif;
-  font-size: 0.7rem;
-  padding: 0.3rem 0.8rem;
+  font-size: clamp(0.62rem, 1.1vh, 0.7rem);
+  padding: 0.25rem 0.7rem;
   background: rgba(240, 192, 64, 0.06);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -136,6 +138,7 @@
   border-color: var(--gold);
   color: var(--gold);
 }
+
 
 /* Juice and Overlay styles */
 .target-indicator {

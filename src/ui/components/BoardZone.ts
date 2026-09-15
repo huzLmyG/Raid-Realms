@@ -17,11 +17,13 @@ export function renderBoardArea(
   const area = document.createElement('div');
   area.className = `board-area ${options.isEnemy ? 'enemy-board' : 'my-board'}`;
 
-  // Unit Section
+  // Unit Section (7 slots)
   const unitSection = document.createElement('div');
-  unitSection.className = 'board-section';
+  unitSection.className = 'board-section units-section';
 
-  player.units.forEach((unit, slotIndex) => {
+  const totalUnitSlots = 7;
+  for (let slotIndex = 0; slotIndex < totalUnitSlots; slotIndex++) {
+    const unit = player.units[slotIndex];
     if (unit) {
       const isSelected = !options.isEnemy && options.selectedAttackerSlot === slotIndex;
       const canTarget = options.isEnemy && options.canTargetChecker
@@ -37,42 +39,69 @@ export function renderBoardArea(
         }
       });
       unitSection.appendChild(cardEl);
+    } else {
+      const slotEl = document.createElement('div');
+      slotEl.className = 'board-slot empty-slot unit-slot';
+      slotEl.title = `Einheiten-Slot ${slotIndex + 1}`;
+      slotEl.innerHTML = `<span class="slot-icon">⚔️</span><span class="slot-num">${slotIndex + 1}</span>`;
+      unitSection.appendChild(slotEl);
     }
-  });
+  }
 
-  // Buildings Section
+  // Buildings Section (minimum 3 slots)
   const buildingSection = document.createElement('div');
-  buildingSection.className = 'board-section';
+  buildingSection.className = 'board-section buildings-section';
 
-  player.buildings.forEach((building) => {
-    const canTarget = options.isEnemy && options.canTargetChecker
-      ? options.canTargetChecker({ type: 'building', ownerIndex, buildingUid: building.uid })
-      : false;
+  const numBldgSlots = Math.max(3, player.buildings.length);
+  for (let bIndex = 0; bIndex < numBldgSlots; bIndex++) {
+    const building = player.buildings[bIndex];
+    if (building) {
+      const canTarget = options.isEnemy && options.canTargetChecker
+        ? options.canTargetChecker({ type: 'building', ownerIndex, buildingUid: building.uid })
+        : false;
 
-    const cardEl = createCardElement(building, {
-      isBoard: true,
-      canTarget,
-      onClick: () => {
-        if (options.onBuildingClick) options.onBuildingClick(building.uid);
-      }
-    });
-    buildingSection.appendChild(cardEl);
-  });
+      const cardEl = createCardElement(building, {
+        isBoard: true,
+        canTarget,
+        onClick: () => {
+          if (options.onBuildingClick) options.onBuildingClick(building.uid);
+        }
+      });
+      buildingSection.appendChild(cardEl);
+    } else {
+      const slotEl = document.createElement('div');
+      slotEl.className = 'board-slot empty-slot building-slot';
+      slotEl.title = 'Gebäude-Slot (Passiv)';
+      slotEl.innerHTML = `<span class="slot-icon">🏰</span>`;
+      buildingSection.appendChild(slotEl);
+    }
+  }
 
   const divider = document.createElement('div');
   divider.className = 'board-divider';
 
+  const labelUnits = document.createElement('div');
+  labelUnits.className = 'board-label';
+  labelUnits.textContent = 'EINHEITEN';
+
+  const labelBldg = document.createElement('div');
+  labelBldg.className = 'board-label';
+  labelBldg.textContent = 'GEBÄUDE';
+
   if (options.isEnemy) {
-    // Enemy: Buildings on top, Units on bottom
+    area.appendChild(labelBldg);
     area.appendChild(buildingSection);
     area.appendChild(divider);
     area.appendChild(unitSection);
+    area.appendChild(labelUnits);
   } else {
-    // Player: Units on top, Buildings on bottom
+    area.appendChild(labelUnits);
     area.appendChild(unitSection);
     area.appendChild(divider);
     area.appendChild(buildingSection);
+    area.appendChild(labelBldg);
   }
 
   return area;
 }
+
