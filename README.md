@@ -2,7 +2,7 @@
 
 > **Taktisches 1v1-Deckbuilder-Duell** im Browser und auf Desktop — Dark Fantasy Pixel Art, 10 asymmetrische Rassen, In-Match-Kartenmarkt und tiefe Synergien.
 
-[![Status](https://img.shields.io/badge/Status-In%20Entwicklung%20(Teil%20A)-blue.svg)](#bauplan--status)
+[![Status](https://img.shields.io/badge/Status-In%20Entwicklung%20(A2%20bereit)-blue.svg)](#bauplan--status)
 [![Engine](https://img.shields.io/badge/Engine-TypeScript%20%7C%20Vite-yellow.svg)](#technologie)
 [![Platform](https://img.shields.io/badge/Plattform-Web%20%7C%20PWA%20%7C%20Steam%20(Tauri)-purple.svg)](#plattformen)
 
@@ -29,7 +29,8 @@ Das Projekt wird strukturiert nach der **`idee-zu-bauplan`**-Methodik entwickelt
 
 ### 📍 Du bist hier:
 > **Teil A — Fundament & Modularisierung**  
-> Aktuelles Paket: [A1 — Projekt-Setup & Build-Pipeline](bauplan/a1-setup-build.md) (bereit zur Umsetzung)
+> ✅ [A1 — Projekt-Setup & Build-Pipeline](bauplan/a1-setup-build.md) (Abgeschlossen)  
+> ⏳ Nächstes Paket: [A2 — Core Engine & Datenmodelle](bauplan/a2-core-engine.md) (Bereit zur Umsetzung)
 
 ### Phasen-Übersicht:
 1. **Teil A — Fundament & Modularisierung** (Vite, TS, State Machine, Engine-Tests, lokales PvE)
@@ -42,7 +43,7 @@ Das Projekt wird strukturiert nach der **`idee-zu-bauplan`**-Methodik entwickelt
 
 ## 🛠️ Technologie
 
-- **Core:** TypeScript, deterministische State Machine
+- **Core:** TypeScript, deterministische State Machine, Vitest
 - **Frontend:** HTML5 Canvas / CSS Grid & Flexbox, responsive PWA
 - **Audio:** Web Audio API (Synthesizer-Pipeline)
 - **Netzwerk:** WebRTC (PeerJS P2P, serverlos)
