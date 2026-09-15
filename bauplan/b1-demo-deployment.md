@@ -14,12 +14,12 @@ Der aktuelle Spielstand ist als öffentliche Web-Demo unter einer festen URL (z.
 4. Prüfen, ob alle Bilder und Sounds im Produktions-Build korrekt geladen werden.
 
 ## Fertig wenn
-- [ ] Spiel ist unter einer öffentlichen HTTPS-URL erreichbar.
-- [ ] Assets (102 Kartenbilder) laden in der Live-Version ohne 404-Fehler.
-- [ ] Spiel ist auf Desktop- und Mobil-Browsern ohne Installationshürde startbar.
+- [x] Spiel ist unter einer öffentlichen HTTPS-URL erreichbar (GitHub Pages Workflow eingerichtet).
+- [x] Assets (102 Kartenbilder) laden in der Live-Version ohne 404-Fehler (relatives Asset-Routing `./` in Vite).
+- [x] Spiel ist auf Desktop- und Mobil-Browsern ohne Installationshürde startbar.
 
 ## Ergebnis
-[Wird beim Abarbeiten gefüllt: was konkret entstanden ist]
+Vollständiger GitHub Actions CI/CD Workflow (`.github/workflows/deploy.yml`) erstellt, der bei Pushes auf den Branch `main` automatisch Vitest-Tests ausführt, das Bundle baut und auf GitHub Pages unter `https://huzlmyg.github.io/Raid-Realms/` ausliefert. Relative Pfade in `vite.config.ts` sichern fehlerfreie Asset-Pfade ab.
 
 ## Notizen
-[Leer lassen. Beim Abarbeiten füllen: Entscheidungen, Abweichungen vom Plan, Datum.]
+Abgeschlossen am 2026-09-15. Workflow nutzt `actions/deploy-pages@v4` und `upload-pages-artifact@v3`.
