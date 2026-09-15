@@ -3,7 +3,7 @@
 > Inhaltsverzeichnis des Bauplans. Entstanden nach Phase 4 der `idee-zu-bauplan`-Methodik.  
 > Lebendes Dokument — nach jeder Meilenstein-Retro aktualisieren.
 
-**Du bist hier:** Parallelstrang · Pakete O3 & O4 (Markenrecherche & Förderungs-Check)  
+**Du bist hier:** 🎉 **Alle Meilensteine und Pakete erfolgreich abgeschlossen (100% COMPLETE)**  
 **Letzte Aktualisierung:** 2026-09-15
 
 ---
@@ -77,10 +77,10 @@
 
 ---
 
-### Parallelstrang — Organisation & Recht
+### Parallelstrang — Organisation & Recht (100% Abgeschlossen)
 | Paket | Titel & Ziel (1 Satz) | Wann | Rollen |
 |---|---|---|---|
 | [O1](o1-recht-impressum.md) | **Impressum & Datenschutz:** Rechtssicheres § 5 DDG Impressum und Datenschutzerklärung für Web-Hosting. | ✅ fertig | 👤 Nutzer / 🤖 Claude |
 | [O2](o2-ai-act-kennzeichnung.md) | **EU AI Act Kennzeichnung:** Transparenzhinweis zu KI-generierten Kartengrafiken einbinden. | ✅ fertig | 🤖 Claude |
-| [O3](o3-name-branding.md) | **Namensfindung & Marken-Check:** Finalen Titel festlegen und DPMA-Register kurz prüfen. | ⏳ bereit | 👤 Nutzer / 🤖 Claude |
-| [O4](o4-foerderung.md) | **Förderungs-Check (optional):** Regionale Prototypenförderung (z.B. Gamecity/NRW) sichten. | ⏳ bereit | 👤 Nutzer / 🤖 Claude |
+| [O3](o3-name-branding.md) | **Namensfindung & Marken-Check:** Finalen Titel festlegen und DPMA-Register kurz prüfen. | ✅ fertig | 👤 Nutzer / 🤖 Claude |
+| [O4](o4-foerderung.md) | **Förderungs-Check (optional):** Regionale Prototypenförderung (z.B. Gamecity/NRW) sichten. | ✅ fertig | 👤 Nutzer / 🤖 Claude |

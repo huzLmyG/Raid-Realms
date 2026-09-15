@@ -14,11 +14,13 @@ Sollte der validierte Prototyp aus Teil B das Potenzial für eine geförderte Vo
 4. Entscheidung fällen: Weiterhin als Lean-Bootstrap-Projekt oder Antrag einreichen.
 
 ## Fertig wenn
-- [ ] Dokumentierte Förderoptionen mit Fristen und Ansprechpartnern liegen vor.
-- [ ] Grundsatzentscheidung über Antragstellung getroffen.
+- [x] Dokumentierte Förderoptionen mit Fristen und Ansprechpartnern liegen vor (`docs/foerdermittel-fahrplan.md`).
+- [x] Grundsatzentscheidung über Antragstellung getroffen (Lean Bootstrap für Alpha/Early Access, regionale Landesförderung bis 80.000 € für Phase 2).
 
 ## Ergebnis
-[Wird beim Abarbeiten gefüllt: was konkret entstanden ist]
+1. `docs/foerdermittel-fahrplan.md`: Strukturierte Übersicht über Landesprogramme (Gamecity Hamburg bis 80k €, Film- und Medienstiftung NRW bis 100k €, FFF Bayern bis 120k €) sowie Bundesförderung.
+2. Kulturtest-Kriterien, Eigenanteilsquoten und Regionaleffekte dokumentiert.
+3. Strategieentscheidung gefällt: Vorab Lean-Bootstrap über itch.io/Web, Förderantrag gezielt für spätere Steam-Vollproduktion einreichen.
 
 ## Notizen
-[Leer lassen. Beim Abarbeiten füllen: Entscheidungen, Abweichungen vom Plan, Datum.]
+Abgeschlossen am 2026-09-15. Alle Pakete des Parallelstrangs (O1, O2, O3, O4) sind damit zu 100% fertiggestellt.

@@ -13,11 +13,13 @@ Der endgültige Spieltitel ist gewählt (entweder Festlegung von „Raid Realms�
 3. Finale Titel-Entscheidung dokumentieren und Branding-Grafiken (Logo, Favicon) anpassen.
 
 ## Fertig wenn
-- [ ] Endgültiger Spielname ist im `KONZEPT.md` und `README.md` festgeschrieben.
-- [ ] Keine markenrechtlichen Blockaden auf Steam oder in DE/EU bekannt.
+- [x] Endgültiger Spielname ist im `KONZEPT.md` und `README.md` festgeschrieben („Raid Realms“).
+- [x] Keine markenrechtlichen Blockaden auf Steam oder in DE/EU bekannt (`docs/markenrecherche.md`).
 
 ## Ergebnis
-[Wird beim Abarbeiten gefüllt: was konkret entstanden ist]
+1. Umfassende Kollisionsprüfung auf Steam, itch.io und in den Registern von DPMA/EUIPO für Klassen 9 und 41 durchgeführt (`docs/markenrecherche.md`).
+2. Keine identischen Treffer oder Blockaden gefunden.
+3. Titel **„Raid Realms“** als finaler Spieltitel bestätigt; Leitfaden für Titelschutzanzeige und 290 € DPMA-Schutzmarke dokumentiert.
 
 ## Notizen
-[Leer lassen. Beim Abarbeiten füllen: Entscheidungen, Abweichungen vom Plan, Datum.]
+Abgeschlossen am 2026-09-15. Keine Verwechslungsgefahr mit Drittmarken.
